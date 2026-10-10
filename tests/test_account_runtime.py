@@ -68,7 +68,7 @@ def test_live_account_second_observation_records_review_only_delta(monkeypatch,t
     app_module=importlib.import_module('app')
     app_module.store=IncidentStore(str(tmp_path/'observations.sqlite3'))
     responses=[signed_example(),signed_example()]
-    responses[1]['orders']['d']=[{'rq':25,'oid':99,'acc':800,'mkt':16}]
+    responses[1]['orders']['d']=[{'rq':25,'oid':99,'acc':800,'mkt':16,'st':2}]
     class SequencedReadClient:
         @classmethod
         def from_env(cls, network):
