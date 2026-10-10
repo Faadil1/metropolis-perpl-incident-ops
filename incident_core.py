@@ -73,7 +73,6 @@ class IncidentStore:
     def record_account_observation(self, summary):
         if not isinstance(summary,dict) or summary.get('classification')!='AUTHENTICATED_PERPL_TESTNET_ACCOUNT_OVERVIEW':
             raise ValueError('Only validated signed-read summaries may be persisted')
-        from account_overview import from_signed_snapshots  # Schema is checked before call
         payload=canon(summary)
         sha=hashlib.sha256(payload.encode()).hexdigest()
         self.db.execute(
@@ -224,8 +223,8 @@ class IncidentStore:
 
     def _snapshot(self, ident, kind, frame, source):
         expected = {'wallet':19,'orders':23,'positions':26}[kind]
-        data = frame.get('d')
-        if frame.get('mt') != expected or not isinstance(data, dict if kind=='wallet' else list):
+        data = frame.get('as') if kind=='wallet' else frame.get('d')
+        if frame.get('mt') != expected or not isinstance(data, list):
             raise ValueError('snapshot schema uncertain; must remain UNKNOWN')
         timestamp = now()
         self.db.execute('INSERT INTO account_snapshots(incident_id,kind,raw_json,source,observed_at) VALUES(?,?,?,?,?) ON CONFLICT(incident_id,kind) DO UPDATE SET raw_json=excluded.raw_json,source=excluded.source,observed_at=excluded.observed_at',
