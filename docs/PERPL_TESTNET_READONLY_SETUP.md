@@ -3,14 +3,26 @@
 **Do this on your own computer, not in a chat message, issue, PR or CI secret.**
 A public API probe is not an authenticated testnet read, and neither is a trading session.
 
-## 1. Enroll a strictly READ-scoped key
-1. Open the [official Perpl Testnet API Keys page](https://testnet.perpl.xyz/apikeys).
-2. Connect **a dedicated test wallet**. Do not use your primary wallet or transfer mainnet funds.
-3. Select **read-only** scope, not `trade` or a combined scope.
-4. Create the key by wallet signing as instructed on that page.
-5. Keep the opaque `X-API-Key` token and the Ed25519 secret on your machine.
+## 1. Resolve Perpl UI prerequisite (observed in user's Testnet screenshot, 2026-10-10)
 
-Official guide: [Perpl Quickstart](https://github.com/PerplFoundation/perpl-docs/blob/main/docs/resources/for-developers/quickstart.md). Enrolling a key alone **does not** create an exchange account. Some per-account reads can return 404 until a testnet Exchange account is created separately.
+The page `https://testnet.perpl.xyz/apikeys` displayed:
+
+> You need to deposit funds to create a trading account before you can create API keys.
+> Sign in pending
+
+This is a **Web UI enrollment prerequisite**. Canonical Perpl API documentation treats *API enrollment*, *Exchange account creation*, and *order forwarding* as distinct components. **The API enrollment protocol does not, by itself, prove an Exchange account or any right to trade.** Do not claim that the UI allows a key before depositing; the observed UI blocks it.
+
+1. Confirm URL is `testnet.perpl.xyz` and wallet network is **Monad Testnet chain ID 10143**, using a *dedicated throwaway test wallet*.
+2. Click **Sign in pending** once, inspect the browser wallet's pending request; only approve a normal Perpl sign-in message after verifying origin and scope. If it asks for unlimited token allowance, a transfer, or mainnet rights, **stop and inspect**.
+3. Navigate to the Perpl Testnet trading/account view and look for **Deposit / Deposit to Enable Trading** (official docs say this is the Web UI route for creating an exchange account). Do not guess the needed amount: check the UI and live public `/api/v1/pub/context` account-open limits.
+4. Obtain test MON for gas from the [official Monad faucet](https://faucet.monad.xyz) if needed. **MON is gas, not the Perpl collateral token.**
+5. For the required testnet collateral, use only a **verified testnet faucet or test token provided in the official Perpl/Monad flow**, matching the **testnet collateral contract configured by Perpl**. The Perpl API docs identify testnet collateral as USD at `0xdf5b718d8fcc173335185a2a1513ee8151e3c027`; don't transfer an unrelated AUSD or mainnet token.
+6. Any token approval must be limited to the actual test deposit amount; inspect the target contract and chain before confirming. **No actual funds, mainnet bridge, unlimited approvals or use of the user's primary wallet.**
+7. After a successful test-only deposit and account creation, return to API Keys; enroll a **read-only** key and store its opaque token and Ed25519 secret *locally*. Do not grant `trade`; do not enable One-Click Trading or `allowOrderForwarding(true)` for read-only inspection.
+
+**If no trustworthy test collateral faucet is available:** STOP. This is an **EXTERNAL_ACCOUNT_BOOTSTRAP_BLOCKED** condition; do not purchase tokens or relabel a local fixture as live. A programmatic read-key enrollment flow is documented at [Perpl Integrations](https://github.com/PerplFoundation/api-docs/blob/main/integrations.md) and may avoid the *frontend enrollment gate*, but cannot create a funded Exchange account or prove the live operator workflow.
+
+Sources: [Perpl API documentation](https://github.com/PerplFoundation/api-docs/blob/main/README.md), [Perpl Authentication](https://github.com/PerplFoundation/api-docs/blob/main/authentication.md), [Monad official testnet faucet](https://faucet.monad.xyz).
 
 ## 2. Configure LOCAL environment variables
 
