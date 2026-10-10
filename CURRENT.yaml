@@ -1,0 +1,25 @@
+version: 0.1.0
+date: 2026-10-10
+project: METROPOLIS_PERPL_INCIDENT_OPERATIONS
+repo: Faadil1/metropolis-perpl-incident-ops
+branch: research/live-depth-foundation
+authority: RESEARCH_ONLY
+concept_lock: BLOCKED
+build_state: LOCAL_VERIFIED
+live_core_loop: BLOCKED
+sponsor: MONAD_METROPOLIS_2026
+deadline_date: 2026-10-13
+deadline_clock: UNVERIFIED_ON_PUBLIC_SITE
+historic_repo: Faadil1/valid-until-agent-os
+historic_repo_mutation: FORBIDDEN
+positive_signal: official Perpl client APIs have documented idempotency and reconciliation requirements
+negative_event:
+  source: https://github.com/frankolien/desk/blob/main/docs/perpl-order-400-audit-2026-09-15.md
+  verdict: SOURCE_VERIFIABLE_HISTORICAL_INCIDENT
+  limitation: competitor Desk has already corrected its false-expiry bug
+differentiation: BLOCKED
+user_demand: UNKNOWN
+live_perpl_read: BLOCKED_NO_USER_ACCOUNT_OR_TESTNET_READ_KEY
+live_perpl_write: NOT_IMPLEMENTED
+production_funds: FORBIDDEN
+next_action: independent current client collision assessment and safe testnet read on a user-owned account

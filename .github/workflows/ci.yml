@@ -1,0 +1,29 @@
+name: Research baseline checks
+on:
+  push:
+    branches: [main, "research/**"]
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install
+        run: python -m pip install -r requirements.txt
+      - name: Python tests
+        run: python -m pytest -q
+      - name: No committed secrets
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          forbidden = [p for p in Path('.').rglob('*') if p.is_file() and (p.name == '.env' or p.suffix in {'.pem','.key','.p12','.pfx'} or p.name.endswith('.sqlite3')) and '.git' not in p.parts]
+          assert not forbidden, f"Potential secrets/runtime committed: {forbidden}"
+          PY
