@@ -71,7 +71,7 @@ git pull --ff-only
 .\\scripts\\start_operator_readonly.ps1
 ```
 
-Visit `http://127.0.0.1:8765`, then click **Actualiser le compte Testnet LIVE**. The UI shows only a sanitized account ID, exchange instance, frozen/forwarding flags, last forwarded request ID, snapshot blocks and counts — never keys, balances, wallet address or individual orders. The sanitized observation is persisted in the local SQLite runtime under `runtime/` so a restart does not erase it.
+Visit `http://127.0.0.1:8765`, then click **Actualiser le compte Testnet LIVE**. The live section shows **only actual open orders and first-page history returned by signed Perpl GET**; an empty account shows **Aucun ordre observé**, not seeded orders. Changes are review signals; they do not automatically open incidents. The UI shows only a sanitized account ID, exchange instance, frozen/forwarding flags, last forwarded request ID, snapshot blocks and counts — never keys, balances, wallet address or individual orders. The sanitized observation is persisted in the local SQLite runtime under `runtime/` so a restart does not erase it.
 
 **This still isn't a full core loop:** authenticated account inspection is real; no genuine incident or validated exchange action has been carried out. After using the UI, press **Ctrl+C** in PowerShell to stop the server. Do not publish `runtime/` or screenshots containing sensitive account information.
 

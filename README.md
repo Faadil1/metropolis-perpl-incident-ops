@@ -13,7 +13,9 @@ An API order can be accepted or filled even when a trading client's response is 
 - Concept Lock: **BLOCKED**
 - Differentiation versus Desk/PerplBot/native Perpl: **BLOCKED**
 - Authenticated Perpl testnet account connection: **PROVEN by sanitized owner terminal output (five HTTP 200 reads)**
-- Authenticated account overview in local operator UI: **PROVEN by owner screenshot**; snapshot blocks 69,883,405–69,883,407; HTTP reads non-atomic
+- Authenticated account overview in local operator UI: **PROVEN by owner screenshots**; snapshot blocks 69,883,405–69,883,407 and subsequent 69,893,555–69,893,557; HTTP reads non-atomic
+- Authenticated account comparison **PROVEN with no aggregate change**; one account (#1060), 0 orders/positions; no incident inferred
+- Read-only genuine order observer: **IMPLEMENTED, NOT YET LIVE-EXERCISED**; observed order IDs originate only from signed Perpl order snapshots/history, no synthetic trading
 - Live incidents, authenticated cancellation, actual downstream trade consequences: **NOT IMPLEMENTED / NOT PROVEN**
 - Historical real negative event: **PROVEN as a documented source**, independent external demand unknown
 - No production-readiness or security assurance claim

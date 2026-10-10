@@ -30,6 +30,14 @@ aside{margin-top:17px;color:var(--muted);font:12px monospace}#error{display:none
 #accountDetailsWrap{margin-top:12px}
 #accountDetailsWrap summary{cursor:pointer;font:600 12px system-ui}
 #accountSignals{margin-top:10px;font:13px/1.5 system-ui}
+.observed-title{font:700 15px/1.4 system-ui;margin:17px 0 5px}
+.observed-note{font:12px/1.5 system-ui;color:var(--muted);margin-bottom:10px}
+.observed-orders{display:grid;gap:7px}
+.observed-order{border:1px solid var(--rule);padding:10px;background:#f6f1e8;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.observed-order strong{font:700 12px monospace}
+.observed-order span{font:12px/1.5 monospace}
+.observed-order .origin{color:var(--orange)}
+
 
 @media(max-width:850px){.columns{grid-template-columns:1fr}header{align-items:start}.brand{font-size:18px}}@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -51,6 +59,13 @@ aside{margin-top:17px;color:var(--muted);font:12px monospace}#error{display:none
 <div id="accountSummary" class="observation-grid" aria-live="polite"></div>
 <div id="accountFlags" class="observation-flags"></div>
 <div id="accountSignals">Aucun résultat : cliquez pour obtenir la première observation. Aucun incident n'est inféré d'un compte vide.</div>
+<div class="observed-title">Ordres réellement observés</div>
+<p class="observed-note">Les ordres apparaissent uniquement s'ils figurent dans les lectures Perpl signées. Aucun ordre n'est créé ici. Un événement historique ne suffit pas à démontrer une conséquence sur les positions.</p>
+<div id="accountOrders" class="observed-orders" aria-live="polite">Aucun ordre observé.</div>
+<details id="accountHistoryWrap"><summary>Historique des ordres — première page seulement</summary>
+<div id="accountHistory" class="observed-orders"></div>
+<p id="accountPagination" class="observed-note"></p>
+</details>
 <details id="accountDetailsWrap"><summary>Voir le relevé technique et la provenance</summary>
 <pre id="accountDetails">Connecter localement la clé READ et actualiser. Aucune donnée manuelle n'est considérée comme LIVE.</pre>
 </details>
@@ -157,6 +172,38 @@ function renderAccount(d,currentlyLive){
  }
  noticeEl.textContent=interpretation+' '+suffix;
  noticeEl.className=delta?.requires_investigation?'observation-warning':'';
+ const observed=d.observed_orders||{};
+ const renderList=(name,root)=>{
+  root.replaceChildren();
+  const collection=observed[name];
+  if(!collection || !collection.rows || !collection.rows.length){
+   const empty=document.createElement('div');empty.textContent='Aucun ordre observé dans '+(name==='open_orders'?'les ordres ouverts':'la première page historique')+'.';
+   empty.className='observed-note';root.append(empty);return;
+  }
+  collection.rows.forEach(order=>{
+   const item=document.createElement('div');item.className='observed-order';
+   const title=document.createElement('strong');
+   title.textContent=order.status;
+   const tuple=document.createElement('span');
+   tuple.textContent='ACC '+order.account_id+' · MKT '+order.market_id+' · rq '+order.request_id+' · OID '+order.order_id;
+   const provenance=document.createElement('span');provenance.className='origin';
+   provenance.textContent=order.source==='AUTHENTICATED_OPEN_ORDER_SNAPSHOT'?
+     'OUVERT AU BLOC '+String(order.snapshot_block??'?'):'ÉVÉNEMENT HISTORIQUE · PAGE 1';
+   const verdict=document.createElement('span');
+   verdict.textContent=order.fill_found_first_page?'FILL OBSERVÉ, POSITION NON VÉRIFIÉE':'EFFET / RÉSULTAT NON INFÉRÉ';
+   item.append(title,tuple,provenance,verdict);root.append(item);
+  });
+  if(collection.display_truncated){
+   const truncated=document.createElement('div');truncated.className='observed-note';
+   truncated.textContent='Affichage limité à '+collection.shown_count+' sur '+collection.available_count+' événements.';
+   root.append(truncated);
+  }
+ };
+ renderList('open_orders',el('accountOrders'));
+ renderList('history_page_1',el('accountHistory'));
+ el('accountPagination').textContent=observed.history_has_more_pages?
+   'D’autres pages existent. Aucun verdict terminal ne peut être fondé sur cette seule page.':
+   'Fin de pagination annoncée pour cette lecture. Aucun état passé ne doit être inféré en cas de lacunes temporelles.';
  el('accountDetails').textContent=JSON.stringify(d,null,2);
 }
 el('accountLive').onclick=async()=>{

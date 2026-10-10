@@ -89,3 +89,28 @@ def test_live_account_second_observation_records_review_only_delta(monkeypatch,t
     assert observed.json()['open_orders_count']==1
     assert client.get('/api/incidents').json()['items']==[]
     assert client.get('/api/account/latest').json()['activity']['incident_detected'] is False
+
+def test_operator_read_includes_only_real_signed_order_data(monkeypatch,tmp_path):
+    import importlib
+    app_module=importlib.import_module('app')
+    app_module.store=IncidentStore(str(tmp_path/'observed.sqlite3'))
+    raw=signed_example()
+    raw['orders']['d']=[{'acc':800,'mkt':16,'rq':91,'oid':77,'st':2,'p':123,'s':45}]
+    class GenuineRead:
+        @classmethod
+        def from_env(cls,network):
+            assert network=='testnet'
+            return cls()
+        def read_all(self):
+            return raw
+    monkeypatch.setattr(app_module,'PerplReadClient',GenuineRead)
+    cli=TestClient(app_module.app)
+    result=cli.post('/api/account/live-refresh')
+    assert result.status_code==200
+    observed=result.json()['observed_orders']['open_orders']['rows']
+    assert len(observed)==1
+    assert observed[0]['request_id']==91
+    assert observed[0]['source']=='AUTHENTICATED_OPEN_ORDER_SNAPSHOT'
+    assert observed[0]['incident_detected'] is False
+    assert '"p": 123' not in result.text
+    assert cli.get('/api/incidents').json()['items']==[]

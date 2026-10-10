@@ -10,6 +10,7 @@ from perpl_client import PerplReadClient, CredentialsUnavailable
 from perpl_market import PublicMarketReader, PublicMarketUnavailable
 from account_overview import from_signed_snapshots, AccountOverviewInvalid
 from observation_delta import compare_live_observations
+from order_observer import summarize_observed_orders
 
 app=FastAPI(title='Perpl Incident Operations',version='0.1.0',docs_url='/api/docs',redoc_url=None)
 store=IncidentStore(os.environ.get('INCIDENT_DB_PATH',str(Path(__file__).resolve().parent/'runtime'/'incidents.sqlite3')))
@@ -81,6 +82,7 @@ def refresh_account_overview():
         client=PerplReadClient.from_env('testnet')
         raw=client.read_all()
         summary=from_signed_snapshots(raw)
+        summary['observed_orders']=summarize_observed_orders(raw)
         previous=store.latest_account_observation()
         summary['activity']=compare_live_observations(previous,summary)
         store.record_account_observation(summary)

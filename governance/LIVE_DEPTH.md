@@ -35,6 +35,16 @@ These signed API responses **prove connectivity to a real Perpl Testnet account 
 
 Next: observe a subsequent genuine account change via READ (no trading required for the application to function), classify changes only as **investigate**, then verify real order and response evidence before proposing any action. No auto-created fake incidents or unapproved exchange writes.
 
+## Second operator LIVE read — 2026-10-10
+
+The owner sent a screenshot of the updated local application showing **1 authenticated Perpl exchange account (#1060)**, **0 open orders, 0 open positions, 0 first-page order-history entries and 0 fills**. The visible account flags are **NOT FROZEN** and **ORDER FORWARDING OFF**.
+
+The UI reports **NO CHANGE OBSERVED IN THESE AGGREGATES**, with wallet/orders/positions blocks **69893555/69893556/69893557**. This is a second real signed snapshot comparison (user screenshot evidence); it does **not** establish absence of unknown order outcomes, nor a complete incident/recovery loop.
+
+The owner screenshot is **not** uploaded to public GitHub; only the sanitized non-secret statement is included. No exchange writes or fake incidents were carried out.
+
+A further product increment implements sanitized **real order observations** from the authenticated open-order snapshot and first order-history page. When the account is empty the product must show no observed orders. It must not manufacture order IDs, infer errors from missing rows, or claim a recovered incident. Later live orders must be user-observed before promotion.
+
 ## Evidence boundaries
 
 | Claim | State |
@@ -45,6 +55,8 @@ Next: observe a subsequent genuine account change via READ (no trading required 
 | Published Desk false-expiry incident | EXTERNAL_DOCUMENTED_HISTORICAL |
 | Read access to user's actual testnet Perpl account | **PROVEN by user-provided sanitized 5/5 HTTP 200 run** |
 | Authenticated account overview inside operator UI | **PROVEN by owner screenshot (local UI + real Perpl signed GET)** |
+| Two signed account reads compared in UI, no aggregate change | **PROVEN by second owner screenshot** |
+| Real order details observed inside product | **NOT YET PROVEN** (0 live orders/history) |
 | Received order-status event from live Perpl WS | BLOCKED |
 | Approved and executed a testnet cancel | NOT_IMPLEMENTED |
 | Final position/order consequence reconciled | NOT_IMPLEMENTED |
