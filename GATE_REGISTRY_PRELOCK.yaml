@@ -12,7 +12,8 @@ signed_read_evidence: USER_PROVIDED_SANITIZED_LOCAL_TERMINAL_OUTPUT_2026_10_10
 signed_testnet_read_status: PROVEN
 operator_ui_signed_read: PROVEN_OWNER_SCREENSHOT_2026_10_10
 comparison_of_real_account_activity: PROVEN_NO_CHANGE_BY_OWNER_SCREENSHOT
-real_order_observation: ACTIVE_AWAITING_ACTUAL_ACTIVITY
+real_order_observation: ACTIVE_DETAILED_ROW_NOT_USER_VERIFIED
+real_order_aggregate_change: PROVEN_OWNER_SCREENSHOT_0_TO_1
 live_order_action_status: BLOCKED
 gateways:
   CORE_LIFECYCLE: {status: ACTIVE}
@@ -49,6 +50,7 @@ gateways:
   AUTHENTICATED_OPERATOR_READ: {status: PROVEN}
   ACCOUNT_STATE_COMPARISON: {status: PROVEN}
   REAL_ORDER_OBSERVATION: {status: ACTIVE}
+  REAL_ORDER_AGGREGATE_CHANGE: {status: PROVEN}
   CLAIM_RUNTIME_EVIDENCE_GRAPH: {status: BLOCKED}
   RUNTIME_COMMIT_BINDING: {status: BLOCKED}
   DETERMINISTIC_DEMO: {status: N/A}

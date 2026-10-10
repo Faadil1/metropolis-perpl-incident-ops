@@ -45,6 +45,18 @@ The owner screenshot is **not** uploaded to public GitHub; only the sanitized no
 
 A further product increment implements sanitized **real order observations** from the authenticated open-order snapshot and first order-history page. When the account is empty the product must show no observed orders. It must not manufacture order IDs, infer errors from missing rows, or claim a recovered incident. Later live orders must be user-observed before promotion.
 
+## First genuine user-owned Perpl Testnet order and Metropolis detection — 2026-10-10
+
+**Two independent owner-provided screenshots, different surfaces:**
+
+- **Official Perpl Testnet UI:** account #1060, `BTC PERP`, **Limit / Long / Post Only / 1×**, price **82,000 USD**, size **0.0002 BTC**, notional **16.40 test USD**, status **OPEN**, remaining size **0.0002 BTC**. Open orders tab displayed one row; no trade execution visible in that row. These figures are an owner screenshot of a live testnet order, not replay.
+- **Actual local Metropolis UI:** authenticated signed Testnet GET shows **1 open order** (previously 0), **1 first-page history event**, **0 fills**, **0 open positions**, and `ACTIVITY_CHANGE_REVIEW_ONLY`. Snapshot blocks: wallet **69,900,670**, open orders **69,900,671**, positions **69,900,672** (non-atomic HTTP). No incident was created, no exchange write made.
+- **Strict evidence boundary:** live count change is proven. The local screenshot does *not* show the new `Ordres réellement observés` panel, so `rq`, `oid`, provenance of the specific row and exact account-order matching in that code path remain **NOT YET USER-VERIFIED**. Do not invent IDs or claim incident resolution. The displayed UI appears to be an older locally running server; restart after pulling the latest research branch.
+- Pending order can fill while testnet market moves; never promise it will remain open. Owner may cancel independently via Perpl if unwilling to retain an open order. Read-only app has no cancel ability.
+- Screenshots and private API material are **not** published to public GitHub. Only these sanitized operator-supplied observations are retained.
+
+**Verified:** a real exchange order exists and the signed local operator monitor detects changed aggregate order count (LIVE positive path). **Not verified:** detailed row mapping, reliable negative-event detection, safe exchange intervention, recovery, competitive differentiated value, full product depth and Concept Lock.
+
 ## Evidence boundaries
 
 | Claim | State |
@@ -56,7 +68,8 @@ A further product increment implements sanitized **real order observations** fro
 | Read access to user's actual testnet Perpl account | **PROVEN by user-provided sanitized 5/5 HTTP 200 run** |
 | Authenticated account overview inside operator UI | **PROVEN by owner screenshot (local UI + real Perpl signed GET)** |
 | Two signed account reads compared in UI, no aggregate change | **PROVEN by second owner screenshot** |
-| Real order details observed inside product | **NOT YET PROVEN** (0 live orders/history) |
+| Signed operator aggregate counts react to first real testnet order | **PROVEN by owner screenshots — 0→1 open orders** |
+| Real order `rq/oid` details observed inside product | **NOT YET PROVEN**; running local UI lacks newest order-row panel |
 | Received order-status event from live Perpl WS | BLOCKED |
 | Approved and executed a testnet cancel | NOT_IMPLEMENTED |
 | Final position/order consequence reconciled | NOT_IMPLEMENTED |

@@ -68,5 +68,30 @@ owner_operator_second_verified_screenshot:
   no_real_order_or_incident_proven: true
   screenshot_publication: NOT_AUTHORIZED
 live_read_comparison_in_operator_ui: PROVEN_BY_OWNER_SCREENSHOT_NO_CHANGE
-real_order_observer: IMPLEMENTED_AWAITING_LIVE_ORDER
-next_action: evaluate real observed order workflow, no synthetic events or exchange writes; preserve novelty and concept gates
+real_order_observer: IMPLEMENTED_DETAILS_NOT_YET_SEEN_IN_OWNER_UI
+first_real_testnet_order:
+  provenance: OWNER_SCREENSHOTS_PERPL_UI_AND_LOCAL_SIGNED_GET_AGGREGATES
+  date: 2026-10-10
+  account_id: 1060
+  perpl_ui_order: LIMIT_LONG_BTC_POST_ONLY_1X
+  size_btc: "0.0002"
+  limit_price_usd: "82000"
+  nominal_value_test_usd: "16.40"
+  perpl_ui_status: OPEN
+  perpl_ui_remaining_size_btc: "0.0002"
+  signed_operator_account_read:
+    open_orders: 1
+    order_history_first_page: 1
+    fills_first_page: 0
+    open_positions: 0
+    wallet_block: 69900670
+    orders_block: 69900671
+    positions_block: 69900672
+    delta_classification: ACTIVITY_CHANGE_REVIEW_ONLY
+  request_id_rq: UNKNOWN_NOT_SHOWN_IN_OWNER_UI
+  order_id_oid: UNKNOWN_NOT_SHOWN_IN_OWNER_UI
+  incident_or_fill_proven: false
+  screenshots_publication: NOT_AUTHORIZED
+  owner_local_ui_version: LIKELY_STALE_MISSING_REAL_ORDER_ROWS
+real_order_aggregate_observation: PROVEN_BY_OWNER_LOCAL_SIGNED_UI_SCREENSHOT
+next_action: owner restart on latest research branch and verify signed rq_oid details; do not create a duplicate testnet order; then compare post-cancel state
