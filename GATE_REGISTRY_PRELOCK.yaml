@@ -10,6 +10,8 @@ negative_event_evidence: https://github.com/frankolien/desk/blob/main/docs/perpl
 truth_boundary: authenticated_testnet_reads_user_observed_5_of_5__core_loop_incident_and_demand_unproven
 signed_read_evidence: USER_PROVIDED_SANITIZED_LOCAL_TERMINAL_OUTPUT_2026_10_10
 signed_testnet_read_status: PROVEN
+operator_ui_signed_read: PROVEN_OWNER_SCREENSHOT_2026_10_10
+comparison_of_real_account_activity: ACTIVE_WAITING_SECOND_OBSERVATION
 live_order_action_status: BLOCKED
 gateways:
   CORE_LIFECYCLE: {status: ACTIVE}
@@ -43,6 +45,7 @@ gateways:
   NEGATIVE_PATH: {status: ACTIVE}
   EVIDENCE_INTEGRITY: {status: ACTIVE}
   AUTHENTICATED_TESTNET_READ: {status: PROVEN}
+  AUTHENTICATED_OPERATOR_READ: {status: PROVEN}
   CLAIM_RUNTIME_EVIDENCE_GRAPH: {status: BLOCKED}
   RUNTIME_COMMIT_BINDING: {status: BLOCKED}
   DETERMINISTIC_DEMO: {status: N/A}

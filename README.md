@@ -1,6 +1,6 @@
 # Perpl Incident Operations — Metropolis 2026
 
-**Status:** PRE-LOCK research build · **LOCAL_VERIFIED** only · **NOT LIVE** · **NO trading/exchange writes**
+**Status:** PRE-LOCK research build · **LIVE AUTHENTICATED TESTNET READS PROVEN BY OWNER** · **LIVE CORE LOOP BLOCKED** · **NO trading/exchange writes**
 
 A prospective operator-facing incident recovery product for Perpl on Monad. The source of truth is this repository; the historic [Valid Until](https://github.com/Faadil1/valid-until-agent-os) repository remains frozen and separate.
 
@@ -12,7 +12,8 @@ An API order can be accepted or filled even when a trading client's response is 
 
 - Concept Lock: **BLOCKED**
 - Differentiation versus Desk/PerplBot/native Perpl: **BLOCKED**
-- Authenticated Perpl testnet account connection: **NOT PROVEN**
+- Authenticated Perpl testnet account connection: **PROVEN by sanitized owner terminal output (five HTTP 200 reads)**
+- Authenticated account overview in local operator UI: **PROVEN by owner screenshot**; snapshot blocks 69,883,405–69,883,407; HTTP reads non-atomic
 - Live incidents, authenticated cancellation, actual downstream trade consequences: **NOT IMPLEMENTED / NOT PROVEN**
 - Historical real negative event: **PROVEN as a documented source**, independent external demand unknown
 - No production-readiness or security assurance claim
@@ -28,6 +29,14 @@ The project must earn its differentiation as *operator incident recovery with du
 - **No secrets** in Git history, issues, screenshots, fixtures or browser forms.
 - If actual Perpl access is unavailable, explain the blocked gate; never relabel fixtures as live.
 - No mainnet trading or real-money flows are authorized.
+
+## Observe your real testnet account safely
+
+For the owner-controlled Windows setup (no credentials in chat or GitHub), see [the read-only guide](./docs/PERPL_TESTNET_READONLY_SETUP.md). Start the local operator with `scripts/start_operator_readonly.ps1` and click **Actualiser le compte Testnet LIVE**.
+
+The account overview is a useful starting point for real operator work. Two successive signed reads may indicate changes in aggregate open-order/position counts or account flags; **none of those changes alone proves an incident, failure, fill, or completed recovery**. New account scopes are not silently compared, and a regressed snapshot block requires investigation.
+
+Current negative-path and competitor novelty gates remain active. A true business outcome still requires a real request/order, authenticated reconciliation, human authorization for any safe corrective action, and verified post-action state.
 
 See the research PR for the code baseline, tests, CI and the full conditional-gateway registry. Sources: [Perpl API docs](https://github.com/PerplFoundation/api-docs), [MetaMask Agent Wallet](https://github.com/MetaMask/agent-wallet-plugin-examples).
 

@@ -20,6 +20,17 @@ button.secondary{background:transparent;color:var(--ink)}button:hover{opacity:.8
 pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#eae5db;padding:12px;font:11px/1.5 monospace;max-height:330px;overflow:auto}
 aside{margin-top:17px;color:var(--muted);font:12px monospace}#error{display:none;padding:10px;background:#ffeadd;margin:15px 0;border:1px solid #c38d73}
 #detail{display:none}#truth{color:var(--green);font:700 12px monospace}
+.observation-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px;margin:15px 0}
+.observation-cell{background:#eee9df;border-top:2px solid var(--rule);padding:12px}
+.observation-cell b{display:block;font:700 21px/1.3 system-ui;overflow-wrap:anywhere}
+.observation-cell span{display:block;color:var(--muted);font:12px/1.5 system-ui}
+.observation-flags{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 12px}
+.observation-flag{border:1px solid var(--rule);padding:5px 8px;font:12px/1.5 monospace}
+.observation-warning{color:var(--orange);font-weight:700}
+#accountDetailsWrap{margin-top:12px}
+#accountDetailsWrap summary{cursor:pointer;font:600 12px system-ui}
+#accountSignals{margin-top:10px;font:13px/1.5 system-ui}
+
 @media(max-width:850px){.columns{grid-template-columns:1fr}header{align-items:start}.brand{font-size:18px}}@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -37,7 +48,12 @@ aside{margin-top:17px;color:var(--muted);font:12px monospace}#error{display:none
 <p>Lire l'état réel des comptes et les activités présentes, sans envoyer d'ordre. Les identifiants, soldes et détails de wallet ne sont pas exposés ici.</p>
 <button id="accountLive" type="button">Actualiser le compte Testnet LIVE</button>
 <div class="label" id="accountTruth">AUCUN RELEVÉ AUTHENTIFIÉ DANS CETTE INTERFACE</div>
+<div id="accountSummary" class="observation-grid" aria-live="polite"></div>
+<div id="accountFlags" class="observation-flags"></div>
+<div id="accountSignals">Aucun résultat : cliquez pour obtenir la première observation. Aucun incident n'est inféré d'un compte vide.</div>
+<details id="accountDetailsWrap"><summary>Voir le relevé technique et la provenance</summary>
 <pre id="accountDetails">Connecter localement la clé READ et actualiser. Aucune donnée manuelle n'est considérée comme LIVE.</pre>
+</details>
 </section>
 <div class="columns">
 <section>
@@ -94,11 +110,60 @@ async function show(id){
   el('audit').textContent=ledger.events.slice(-12).map(e=>e.created_at+' | '+e.kind+' | '+e.source).join('\n')+'\nLOCAL HASH CHAIN: '+(ledger.hash_chain_valid?'OK':'INVALID')
 }
 el('create').onsubmit=async event=>{event.preventDefault();try{let form=new FormData(event.target);let row=await api('/api/incidents',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({network:'testnet',account_id:Number(form.get('account_id')),rq:Number(form.get('rq')),market_id:Number(form.get('market_id'))})});selected=row.id;event.target.reset();await refreshPage()}catch(err){notice(err.message)}};
+function renderAccount(d,currentlyLive){
+ const output=el('accountSummary');output.replaceChildren();
+ const fields=[
+  ['Comptes',Array.isArray(d.accounts)?d.accounts.length:'?'],
+  ['Ordres ouverts',d.open_orders_count],
+  ['Positions ouvertes',d.open_positions_count],
+  ['Historique (page 1)',d.history?.order_history?.first_page_count??'?'],
+  ['Fills (page 1)',d.history?.fills?.first_page_count??'?']
+ ];
+ fields.forEach(([label,value])=>{
+  const cell=document.createElement('div');cell.className='observation-cell';
+  const num=document.createElement('b');num.textContent=String(value);
+  const small=document.createElement('span');small.textContent=label;
+  cell.append(num,small);output.append(cell);
+ });
+ const flags=el('accountFlags');flags.replaceChildren();
+ const addFlag=(label)=>{
+  const span=document.createElement('span');span.className='observation-flag';
+  span.textContent=label;flags.append(span);
+ };
+ addFlag('MONAD TESTNET / CHAIN 10143');
+ addFlag(currentlyLive?'LECTURE LIVE OBSERVÉE':'DERNIÈRE LECTURE LOCALE');
+ addFlag('AUCUNE ÉCRITURE AUTORISÉE');
+ addFlag('SNAPSHOTS NON ATOMIQUES');
+ (d.accounts||[]).forEach(account=>{
+  addFlag('Compte #'+account.account_id+
+    (account.frozen?' / GELÉ':' / NON GELÉ')+
+    (account.order_forwarding_enabled?' / FORWARDING ON':' / FORWARDING OFF'));
+ });
+ const blocks=d.snapshot_blocks||{};
+ const suffix='Blocs: wallet '+String(blocks.wallet??'?')+
+   ' · ordres '+String(blocks.orders??'?')+
+   ' · positions '+String(blocks.positions??'?');
+ const noticeEl=el('accountSignals');
+ const delta=d.activity;
+ let interpretation='Première observation ou comparaison indisponible. Aucun incident métier prouvé.';
+ if(delta){
+  if(delta.classification==='ACTIVITY_CHANGE_REVIEW_ONLY')
+   interpretation='Changement observé entre deux lectures : examen nécessaire; cela ne prouve ni erreur, ni fill, ni incident.';
+  else if(delta.classification==='ACCOUNT_SET_CHANGED_REBASE_REQUIRED')
+   interpretation='L’ensemble des comptes a changé : comparaison interrompue, rebaseliner avant toute conclusion.';
+  else if(delta.classification==='NO_CHANGE_OBSERVED')
+   interpretation='Aucun changement détecté dans ces agrégats. Cela ne garantit pas l’absence d’incident.';
+  else interpretation='Première observation authentifiée enregistrée : point de départ, aucune conclusion métier.';
+ }
+ noticeEl.textContent=interpretation+' '+suffix;
+ noticeEl.className=delta?.requires_investigation?'observation-warning':'';
+ el('accountDetails').textContent=JSON.stringify(d,null,2);
+}
 el('accountLive').onclick=async()=>{
  try{
   let d=await api('/api/account/live-refresh',{method:'POST'});
   el('accountTruth').textContent='SIGNED PERPL GET / TESTNET / LIVE ACCOUNT SNAPSHOTS';
-  el('accountDetails').textContent=JSON.stringify(d,null,2);
+  renderAccount(d,true);
  }catch(err){notice('No authenticated live observation: '+err.message)}
 };
 async function loadLatestAccount(){
@@ -106,7 +171,7 @@ async function loadLatestAccount(){
   let d=await api('/api/account/latest');
   if(d.classification==='AUTHENTICATED_PERPL_TESTNET_ACCOUNT_OVERVIEW'){
    el('accountTruth').textContent='LAST LOCAL AUTHENTICATED OBSERVATION / '+d.retrieved_at;
-   el('accountDetails').textContent=JSON.stringify(d,null,2);
+   renderAccount(d,false);
   }
  }catch(err){notice(err.message)}
 }

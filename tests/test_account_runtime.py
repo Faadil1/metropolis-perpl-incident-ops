@@ -62,3 +62,30 @@ def test_wallet_snapshot_schema_fix_in_incident_reconciliation(tmp_path):
     assert result['status']=='SUBMISSION_UNCERTAIN'
     assert result['plan']['can_cancel'] is False
     assert store.verify_ledger(incident)
+
+def test_live_account_second_observation_records_review_only_delta(monkeypatch,tmp_path):
+    import importlib
+    app_module=importlib.import_module('app')
+    app_module.store=IncidentStore(str(tmp_path/'observations.sqlite3'))
+    responses=[signed_example(),signed_example()]
+    responses[1]['orders']['d']=[{'rq':25,'oid':99,'acc':800,'mkt':16}]
+    class SequencedReadClient:
+        @classmethod
+        def from_env(cls, network):
+            assert network=='testnet'
+            return cls()
+        def read_all(self):
+            return responses.pop(0)
+    monkeypatch.setattr(app_module,'PerplReadClient',SequencedReadClient)
+    client=TestClient(app_module.app)
+    baseline=client.post('/api/account/live-refresh')
+    assert baseline.status_code==200
+    assert baseline.json()['activity']['classification']=='BASELINE_ONLY'
+    observed=client.post('/api/account/live-refresh')
+    assert observed.status_code==200
+    assert observed.json()['activity']['classification']=='ACTIVITY_CHANGE_REVIEW_ONLY'
+    assert observed.json()['activity']['requires_investigation'] is True
+    assert observed.json()['activity']['incident_detected'] is False
+    assert observed.json()['open_orders_count']==1
+    assert client.get('/api/incidents').json()['items']==[]
+    assert client.get('/api/account/latest').json()['activity']['incident_detected'] is False

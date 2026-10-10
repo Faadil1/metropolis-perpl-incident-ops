@@ -1,6 +1,6 @@
 # Product Depth & Live Reality — pre-lock
 
-**Status as of 2026-10-10: LOCAL_VERIFIED; LIVE CORE LOOP = BLOCKED.**
+**Status as of 2026-10-10: owner-observed LIVE authenticated reads in the local operator UI; LIVE CORE LOOP = BLOCKED.**
 
 ## Required business loop
 
@@ -11,7 +11,7 @@ User/operator creates or detects an uncertain Perpl order → agent/service obta
 - 2026-10-10, GitHub Actions public REST checks: **Testnet 10143 = 3/3** and **Mainnet 143 = 3/3** (context, BTC ticker, top-of-book); see run [38066778460](https://github.com/Faadil1/metropolis-perpl-incident-ops/actions/runs/38066778460).
 - `POST /api/incidents/{id}/public-market-refresh` now reads the live **testnet** public market state directly from the operator UI, stores local provenance and **does not** change incident/order status.
 - Market context is separate from authenticated wallet/order history. The two HTTP snapshots are **not atomic**, even if block numbers match.
-- CI verification is a live source probe, not evidence that an external user used the app. Authentic account reads, incidents and actual recovery remain **BLOCKED**.
+- CI market-probe evidence is not authenticated account proof. Later on 2026-10-10, the owner independently used the local operator UI with signed account reads. Incidents and actual recovery remain **BLOCKED**.
 
 ## First owner-observed authenticated Testnet milestone — 2026-10-10
 
@@ -26,7 +26,14 @@ User/operator creates or detects an uncertain Perpl order → agent/service obta
 
 These signed API responses **prove connectivity to a real Perpl Testnet account at the user-reported execution time**. They do not prove testnet order placement, genuine incident observation, safe intervention, recovery or customer demand. The exact scope of the issued key is not cryptographically attested by the HTTP 200 reads.
 
-Next: run the operator interface with masked local READ credentials and exercise the newly added authenticated account overview, then inspect the current account's onchain order lifecycle when genuine activity exists.
+**Second observed milestone — user screenshot from the actual operator UI (`127.0.0.1:8765`):**
+- UI label: `SIGNED PERPL GET / TESTNET / LIVE ACCOUNT SNAPSHOTS`.
+- Read blocks: wallet **69,883,405**; orders **69,883,406**; positions **69,883,407**. They are deliberately **non-atomic HTTP snapshots**.
+- First-page order history and fills were empty; `exchange_writes_enabled=false`, `incident_recovery_proven=false`, `live_core_loop_proven=false`.
+- **Evidence boundary:** the screenshot is owner-supplied; we did not independently retrieve authenticated data or receive secrets. The screenshot itself has not been uploaded into the public repository. The screenshot does not show the entire JSON, and no unshown values are inferred.
+- **Verdict:** `AUTHENTICATED_OPERATOR_READ = PROVEN (owner screenshot)`; `LIVE_CORE_LOOP = BLOCKED`.
+
+Next: observe a subsequent genuine account change via READ (no trading required for the application to function), classify changes only as **investigate**, then verify real order and response evidence before proposing any action. No auto-created fake incidents or unapproved exchange writes.
 
 ## Evidence boundaries
 
@@ -37,11 +44,12 @@ Next: run the operator interface with masked local READ credentials and exercise
 | Public Perpl Testnet market data in operator UI | IMPLEMENTED, not externally exercised |
 | Published Desk false-expiry incident | EXTERNAL_DOCUMENTED_HISTORICAL |
 | Read access to user's actual testnet Perpl account | **PROVEN by user-provided sanitized 5/5 HTTP 200 run** |
-| Authenticated account overview inside operator UI | **IMPLEMENTED; live user exercise pending** |
+| Authenticated account overview inside operator UI | **PROVEN by owner screenshot (local UI + real Perpl signed GET)** |
 | Received order-status event from live Perpl WS | BLOCKED |
 | Approved and executed a testnet cancel | NOT_IMPLEMENTED |
 | Final position/order consequence reconciled | NOT_IMPLEMENTED |
-| Real external operator using the workflow | UNKNOWN |
+| Owner/operator exercised authenticated account-read UI | **PROVEN by screenshot** |
+| Independent third-party operator using full incident/recovery workflow | UNKNOWN |
 | Live user value, paid intent, repeat use | UNKNOWN |
 
 ## Scenarios for product depth

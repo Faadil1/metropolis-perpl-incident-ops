@@ -36,5 +36,19 @@ current_account_activity:
   order_history_first_page: 0
   fills_first_page: 0
   source: USER_REPORTED_SANITIZED_VERIFICATION_OUTPUT
-account_live_operator_surface: IMPLEMENTED_UNTESTED_ON_USER_DEVICE
-next_action: exercise live account operator UI on user device, then validate actual trading incident without artificial seed; preserve novelty gate
+account_live_operator_surface: PROVEN_BY_USER_SCREENSHOT_FROM_LOCALHOST
+account_live_screen_capture:
+  provenance: USER_PROVIDED_SCREENSHOT_NO_RAW_API_TRACE
+  date: 2026-10-10
+  source_label: SIGNED_PERPL_GET_TESTNET_LIVE_ACCOUNT_SNAPSHOTS
+  wallet_snapshot_block: 69883405
+  orders_snapshot_block: 69883406
+  positions_snapshot_block: 69883407
+  non_atomic_http_reads: true
+  exchange_writes_enabled: false
+  incident_recovery_proven: false
+  live_core_loop_proven: false
+  history_first_page_count: 0
+  fills_first_page_count: 0
+  screenshot_publication: NOT_AUTHORIZED
+next_action: observe subsequent genuine account activity read-only with safe delta classification; evaluate negative event and competitor novelty before live write
