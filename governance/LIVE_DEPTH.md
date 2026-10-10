@@ -13,6 +13,14 @@ User/operator creates or detects an uncertain Perpl order → agent/service obta
 - Market context is separate from authenticated wallet/order history. The two HTTP snapshots are **not atomic**, even if block numbers match.
 - CI verification is a live source probe, not evidence that an external user used the app. Authentic account reads, incidents and actual recovery remain **BLOCKED**.
 
+## Perpl credential milestone — user report, not independently verified
+
+The user reported creating a Perpl Testnet API key on 2026-10-10. This is a **user-reported account setup milestone**, not a live signed API verification. Do not request credentials in chat or store them in GitHub.
+
+The optional `perpl_auth_check.py` and masked-input `scripts/verify_perpl_read.ps1` exercise five authenticated GET routes on Monad Testnet chain 10143. Their output is redacted to endpoint statuses, counts and page-completeness flags. The keys are not written to disk or sent to GitHub.
+
+The account-read status remains **BLOCKED** until the user executes the local check and reports a sanitized success result. This does not prove an actual incident was resolved or an action had an on-chain consequence.
+
 ## Evidence boundaries
 
 | Claim | State |

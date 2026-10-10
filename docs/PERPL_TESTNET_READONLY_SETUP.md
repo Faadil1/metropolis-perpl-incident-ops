@@ -24,29 +24,51 @@ This is a **Web UI enrollment prerequisite**. Canonical Perpl API documentation 
 
 Sources: [Perpl API documentation](https://github.com/PerplFoundation/api-docs/blob/main/README.md), [Perpl Authentication](https://github.com/PerplFoundation/api-docs/blob/main/authentication.md), [Monad official testnet faucet](https://faucet.monad.xyz).
 
-## 2. Configure LOCAL environment variables
+## 2. First authenticated testnet READ — no secret copied to chat
 
-PowerShell (Windows — terminal session only):
-```powershell
-$env:PERPL_API_KEY_READ = "YOUR_LOCAL_READ_TOKEN"
-$env:PERPL_API_KEY_SECRET_READ = "YOUR_LOCAL_ED25519_KEY_HEX"
-$env:INCIDENT_DB_PATH = ".\\runtime\\incidents.sqlite3"
-```
-Do not copy these values into a screenshot or send them to anyone.
+A Perpl API key normally has **two distinct pieces**:
+- the `X-API-Key` token;
+- the **Ed25519 signing private key** (hex secret), which is **not your wallet's seed phrase or MetaMask private key**.
 
-## 3. Start local app from this repository's research branch
+Both are required for signed API calls. If the Ed25519 secret was not saved when it was created, rotate/recreate the **Perpl API key**; do **not** export your wallet private key as a substitute.
+
+On Windows PowerShell, use the local hidden-input script; it does not echo the keys and clears the environment variables when done:
+
 ```powershell
 git clone https://github.com/Faadil1/metropolis-perpl-incident-ops.git
 cd metropolis-perpl-incident-ops
 git switch research/live-depth-foundation
 py -m venv .venv
-.\\.venv\\Scripts\\Activate.ps1
-python -m pip install -r requirements.txt
-python -m pytest -q
-python -m uvicorn app:app --host 127.0.0.1 --port 8765
+.\\.venv\\Scripts\\python.exe -m pip install -r requirements.txt
+.\\.venv\\Scripts\\python.exe -m pytest -q
+.\\scripts\\verify_perpl_read.ps1
 ```
 
-Open `http://127.0.0.1:8765`. Create an incident using your *own* real Perpl account and `rq` only if available, then press **Lire Perpl Testnet (clé READ)**. This performs GET calls and records snapshots; it does **not** execute or cancel any order.
+If PowerShell blocks unsigned scripts, **do not globally lower execution policy**. Instead, inspect `scripts/verify_perpl_read.ps1` in the GitHub repository and run it in a one-time PowerShell session using `powershell -NoProfile -ExecutionPolicy Bypass -File .\\scripts\\verify_perpl_read.ps1` only after verifying the file.
+
+The script prompts twice with masked input. It performs **GET only** to Perpl Testnet `wallet`, `orders`, `positions`, `order-history` and `fills`; it prints only the status of each request plus counts. It **does not** create incidents, publish balances, place trades, or activate order forwarding.
+
+On success the result prints:
+
+```json
+{
+  "classification": "PERPL_TESTNET_AUTHENTICATED_READ",
+  "authenticated_core_loop_proven": false,
+  "exchange_writes_enabled": false
+}
+```
+
+This sample is illustrative, not a result previously observed for your wallet. An API key that has `Trade` permission can generally read data, but use a **READ-only key** for the current phase. Never store either key in GitHub Actions, repo issues, uploaded files, screenshots or this chat.
+
+## 3. Start the operator UI (optional after verification)
+
+To load credentials for the local operator UI, start it **only on loopback** and in a terminal session that already has the same two Perpl READ credentials set as environment variables. The helper above deliberately erases both after verification; it does not silently start a background server. The application uses `127.0.0.1:8765` and is unaudited — never expose it on a public IP.
+
+```powershell
+.\\.venv\\Scripts\\python.exe -m uvicorn app:app --host 127.0.0.1 --port 8765
+```
+
+The initial authenticated check **does not require creating an incident or knowing `rq`**, unlike the subsequent operator workflow.
 
 ## 4. Read the result honestly
 - `404` can mean no on-chain Perpl exchange account exists; it does not prove an outage.
