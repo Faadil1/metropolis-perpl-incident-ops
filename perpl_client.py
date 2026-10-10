@@ -9,7 +9,9 @@ NETWORKS = {
     'testnet': {'chain_id':10143,'api':'https://testnet.perpl.xyz/api','ws':'wss://testnet.perpl.xyz/ws/v1/trading'},
     'mainnet': {'chain_id':143,'api':'https://app.perpl.xyz/api','ws':'wss://app.perpl.xyz/ws/v1/trading'}
 }
-READ_TARGETS={'wallet':'/v1/trading/wallet','orders':'/v1/trading/orders','positions':'/v1/trading/positions'}
+READ_TARGETS={'wallet':'/v1/trading/wallet','orders':'/v1/trading/orders','positions':'/v1/trading/positions',
+              'order_history':'/v1/trading/order-history?count=100',
+              'fills':'/v1/trading/fills?count=100'}
 
 class CredentialsUnavailable(RuntimeError): pass
 
@@ -65,8 +67,11 @@ class PerplReadClient:
                 try:
                     res=client.get(NETWORKS[self.network]['api']+target,headers=self.signed_get_headers(target))
                     res.raise_for_status(); doc=res.json()
-                    if not isinstance(doc,dict) or doc.get('mt')!={'wallet':19,'orders':23,'positions':26}[label]:
-                        raise ValueError('unexpected snapshot type')
+                    if label in ('wallet','orders','positions'):
+                        if not isinstance(doc,dict) or doc.get('mt')!={'wallet':19,'orders':23,'positions':26}[label]:
+                            raise ValueError('unexpected snapshot type')
+                    elif not isinstance(doc,dict) or not isinstance(doc.get('d'),list) or not isinstance(doc.get('np',''),str):
+                        raise ValueError('unexpected history page type; cannot infer order outcome')
                     out[label]=doc
                 except (httpx.HTTPError,ValueError) as exc:
                     raise ConnectionError(f'{label} read failed ({type(exc).__name__}); outcome UNKNOWN') from None

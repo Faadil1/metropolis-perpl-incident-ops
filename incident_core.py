@@ -205,6 +205,58 @@ class IncidentStore:
                         (ident,kind,canon(frame),source,timestamp))
         self.log(ident,'SNAPSHOT_'+kind.upper(),source,{'mt':expected,'sha256':hashlib.sha256(canon(frame).encode()).hexdigest(),'observed_at':timestamp})
 
+    def _reconcile_history(self, ident, snapshots, source):
+        """Positive evidence may resolve uncertainty; absence in one history page never does."""
+        inc = self.get(ident)
+        history = snapshots.get('order_history')
+        fills = snapshots.get('fills')
+        if history is None or fills is None:
+            self.log(ident, 'HISTORY_UNAVAILABLE_KEEP_UNKNOWN', source,
+                     {'reason':'authenticated history not supplied'})
+            return
+        for label, page in (('order_history', history), ('fills', fills)):
+            if not isinstance(page, dict) or not isinstance(page.get('d'),list):
+                raise ValueError(f'Invalid {label} history schema')
+            self.log(ident, 'HISTORY_PAGE_'+label.upper(), source,
+                     {'count':len(page['d']), 'more_pages':bool(page.get('np')),
+                      'sha256':hashlib.sha256(canon(page).encode()).hexdigest()})
+        matches = [o for o in history['d'] if
+                   isinstance(o,dict) and
+                   o.get('rq')==inc['rq'] and o.get('acc')==inc['account_id'] and
+                   o.get('mkt')==inc['market_id']]
+        if not matches:
+            self.log(ident,'HISTORY_NO_MATCH_NOT_PROOF_OF_FAILURE',source,
+                     {'more_pages':bool(history.get('np')),'rq':inc['rq']})
+            return
+        event=matches[0]  # Perpl history is newest-first. Only positive events can resolve.
+        state=event.get('st')
+        oid=event.get('oid')
+        self.log(ident,'EXCHANGE_ORDER_HISTORY_MATCH',source,
+                 {'rq':inc['rq'],'acc':inc['account_id'],'mkt':inc['market_id'],
+                  'oid':oid,'order_status':state})
+        if state not in STATUS:
+            return
+        if state == 4:
+            matched_fill = any(isinstance(f,dict) and type(oid) is int
+                               and f.get('oid')==oid and f.get('acc')==inc['account_id']
+                               and f.get('mkt')==inc['market_id'] for f in fills['d'])
+            if matched_fill:
+                self.log(ident,'FILL_HISTORY_CONFIRMED',source,
+                         {'oid':oid,'rq':inc['rq'],'proof':'venue fill-history first page'})
+            status = ('FILL_CONFIRMED_POSITION_RECONCILIATION_NEEDED' if matched_fill
+                      else 'ORDER_FILLED_CONSEQUENCE_UNVERIFIED')
+        elif state in (2,3,5,6,7,8,9,10):
+            status={2:'KNOWN_OPEN',3:'PARTIAL_FILL_REVIEW',5:'ORDER_CANCELED',
+                    6:'ORDER_EXPIRED',7:'EXCHANGE_REJECTED',8:'TRIGGER_WAITING',
+                    9:'TRIGGERED_RECONCILE',10:'EXECUTED_RECONCILE'}[state]
+        else:
+            return
+        fields={'order_status':state,'has_definitive_ack':int(state not in (7,)),
+                'last_source':source}
+        if type(oid) is int:
+            fields['order_id']=oid
+        self._transition(ident,status,source,**{k:v for k,v in fields.items() if k!='last_source'})
+
     def refresh_snapshots(self, ident, snapshots, source=LIVE):
         if source != LIVE:
             raise ValueError('refresh requires authenticated read transport')
@@ -212,6 +264,7 @@ class IncidentStore:
             if kind not in snapshots:
                 raise ValueError('all snapshots required')
             self._snapshot(ident,kind,snapshots[kind],source)
+        self._reconcile_history(ident,snapshots,source)
         current = self.get(ident)
         self.db.execute('UPDATE incidents SET last_refresh_at=?,last_source=?,updated_at=? WHERE id=?',(now(),source,now(),ident))
         if current['ws_gap']:
@@ -234,7 +287,7 @@ class IncidentStore:
                 doc = json.loads(row['raw_json'])
                 match = any(isinstance(o,dict) and all((o.get('rq')==inc['rq'],o.get('oid')==inc['order_id'],o.get('acc')==inc['account_id'],o.get('mkt')==inc['market_id'])) for o in doc.get('d',[]))
             return {'action':'OWNER_APPROVAL_FOR_CANCEL' if match else 'REFRESH_LIVE_OPEN_ORDERS','permission':'OWNER_APPROVAL','reason':'only known open order with matching authenticated snapshot is reviewable','can_cancel':match}
-        if inc['status']=='ORDER_FILLED_CONSEQUENCE_UNVERIFIED':
+        if inc['status'] in ('ORDER_FILLED_CONSEQUENCE_UNVERIFIED','FILL_CONFIRMED_POSITION_RECONCILIATION_NEEDED'):
             return {'action':'CONFIRM_FILLS_AND_POSITION','permission':'READ_ONLY','reason':'fill report does not prove final position','can_cancel':False}
         if inc['status'] in ('ORDER_CANCELED','ORDER_EXPIRED','EXCHANGE_REJECTED'):
             return {'action':'RECONCILE_HISTORY_AND_POSITION','permission':'READ_ONLY','reason':'order status alone does not prove account consequence','can_cancel':False}
