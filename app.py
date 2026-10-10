@@ -8,6 +8,7 @@ from pydantic import BaseModel, Field
 from incident_core import IncidentStore, MANUAL
 from perpl_client import PerplReadClient, CredentialsUnavailable
 from perpl_market import PublicMarketReader, PublicMarketUnavailable
+from account_overview import from_signed_snapshots, AccountOverviewInvalid
 
 app=FastAPI(title='Perpl Incident Operations',version='0.1.0',docs_url='/api/docs',redoc_url=None)
 store=IncidentStore(os.environ.get('INCIDENT_DB_PATH',str(Path(__file__).resolve().parent/'runtime'/'incidents.sqlite3')))
@@ -68,6 +69,25 @@ def live_refresh(ident:str):
         raise HTTPException(503,'Read failed; outcome UNKNOWN; no exchange action performed')
     except Exception:
         raise HTTPException(503,'Perpl private read or public context unavailable; no live claim')
+
+@app.get('/api/account/latest')
+def latest_account_observation():
+    return store.latest_account_observation()
+
+@app.post('/api/account/live-refresh')
+def refresh_account_overview():
+    try:
+        client=PerplReadClient.from_env('testnet')
+        raw=client.read_all()
+        summary=from_signed_snapshots(raw)
+        store.record_account_observation(summary)
+        return summary
+    except CredentialsUnavailable as exc:
+        raise HTTPException(424,'READ credentials not available locally')
+    except (ConnectionError,AccountOverviewInvalid,ValueError):
+        raise HTTPException(503,'Account read not independently verified; no observation stored.')
+    except Exception:
+        raise HTTPException(503,'Account read unavailable. No live claim made.')
 
 @app.post('/api/incidents/{ident}/public-market-refresh')
 def public_market_refresh(ident:str):

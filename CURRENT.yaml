@@ -5,7 +5,7 @@ repo: Faadil1/metropolis-perpl-incident-ops
 branch: research/live-depth-foundation
 authority: RESEARCH_ONLY
 concept_lock: BLOCKED
-build_state: LOCAL_VERIFIED
+build_state: LIVE_PERPL_TESTNET_AUTHENTICATED_READ_USER_OBSERVED_PLUS_LOCAL_VERIFIED
 live_core_loop: BLOCKED
 sponsor: MONAD_METROPOLIS_2026
 deadline_date: 2026-10-13
@@ -24,10 +24,17 @@ public_perpl_mainnet_probe: PROVEN_ON_GITHUB_ACTIONS_38066778460
 operator_public_testnet_market_read: IMPLEMENTED_NOT_EXTERNALLY_EXERCISED
 perpl_order_fill_history: IMPLEMENTED_NOT_LIVE_VERIFIED
 perpl_testnet_ui_account_created: USER_REPORTED_API_KEY_CREATED
-perpl_read_key_scope: USER_TO_CONFIRM_READ_ONLY
-perpl_read_authentication: UNVERIFIED_PENDING_LOCAL_SIGNED_GET
-perpl_readiness_script: IMPLEMENTED_NOT_USER_EXECUTED
-live_perpl_read: BLOCKED_PENDING_USER_LOCAL_SIGNED_READ
+perpl_read_key_scope: READ_REPORTED_NOT_CRYPTOGRAPHICALLY_SCOPE_PROVEN
+perpl_read_authentication: PROVEN_BY_USER_REDACTED_LOCAL_OUTPUT_5_OF_5_HTTP200
+perpl_readiness_script: EXECUTED_ON_USER_WINDOWS_DEVICE_34_TESTS_PASS
+live_perpl_read: PROVEN_USER_LOCAL_SIGNED_GET_ACCOUNT_AND_HISTORY
 live_perpl_write: NOT_IMPLEMENTED
 production_funds: FORBIDDEN
-next_action: independent current client collision assessment and safe testnet read on a user-owned account
+current_account_activity:
+  open_orders: 0
+  open_positions: 0
+  order_history_first_page: 0
+  fills_first_page: 0
+  source: USER_REPORTED_SANITIZED_VERIFICATION_OUTPUT
+account_live_operator_surface: IMPLEMENTED_UNTESTED_ON_USER_DEVICE
+next_action: exercise live account operator UI on user device, then validate actual trading incident without artificial seed; preserve novelty gate

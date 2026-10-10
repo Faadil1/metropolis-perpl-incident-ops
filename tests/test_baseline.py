@@ -73,14 +73,14 @@ def test_ws_reanchor_after_gap(db,inc):
     assert db.get(inc)['ws_gap']==0
 
 def test_authenticated_snapshot_without_fill_preserves_unknown(db,inc):
-    snaps={'wallet':{'mt':19,'d':{}},'orders':{'mt':23,'d':[]},'positions':{'mt':26,'d':[]}}
+    snaps={'wallet':{'mt':19,'as':[]},'orders':{'mt':23,'d':[]},'positions':{'mt':26,'d':[]}}
     result=db.refresh_snapshots(inc,snaps,LIVE)
     assert result['status']=='SUBMISSION_UNCERTAIN'
     assert result['last_source']==LIVE
 
 def test_live_order_snapshot_allows_only_review_not_execution(db,inc):
     db.apply_frame(inc,frame(2),WS_LIVE)
-    snaps={'wallet':{'mt':19,'d':{}},'orders':{'mt':23,'d':[{'rq':1001,'acc':751,'mkt':1,'oid':92}]},'positions':{'mt':26,'d':[]}}
+    snaps={'wallet':{'mt':19,'as':[]},'orders':{'mt':23,'d':[{'rq':1001,'acc':751,'mkt':1,'oid':92}]},'positions':{'mt':26,'d':[]}}
     result=db.refresh_snapshots(inc,snaps,LIVE)
     assert result['plan']['can_cancel'] is True
     receipt=db.request_cancel_review(inc,'Owner wants order cancellation')

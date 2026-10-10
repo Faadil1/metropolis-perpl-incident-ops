@@ -56,12 +56,39 @@ class IncidentStore:
           raw_json TEXT NOT NULL, source TEXT NOT NULL, observed_at TEXT NOT NULL,
           PRIMARY KEY(incident_id, kind)
         );
+        CREATE TABLE IF NOT EXISTS account_observations(
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          observed_at TEXT NOT NULL,
+          classification TEXT NOT NULL,
+          overview_sha256 TEXT NOT NULL,
+          overview_json TEXT NOT NULL
+        );
         CREATE TABLE IF NOT EXISTS approvals(
           id TEXT PRIMARY KEY, incident_id TEXT NOT NULL REFERENCES incidents(id),
           action TEXT NOT NULL, owner_note TEXT NOT NULL, state TEXT NOT NULL,
           created_at TEXT NOT NULL
         );
         """)
+
+    def record_account_observation(self, summary):
+        if not isinstance(summary,dict) or summary.get('classification')!='AUTHENTICATED_PERPL_TESTNET_ACCOUNT_OVERVIEW':
+            raise ValueError('Only validated signed-read summaries may be persisted')
+        from account_overview import from_signed_snapshots  # Schema is checked before call
+        payload=canon(summary)
+        sha=hashlib.sha256(payload.encode()).hexdigest()
+        self.db.execute(
+            'INSERT INTO account_observations(observed_at,classification,overview_sha256,overview_json) VALUES(?,?,?,?)',
+            (summary.get('retrieved_at',now()),summary['classification'],sha,payload)
+        )
+        return {'observation_digest':sha,'classification':summary['classification']}
+
+    def latest_account_observation(self):
+        row=self.db.execute('SELECT overview_json,overview_sha256 FROM account_observations ORDER BY id DESC LIMIT 1').fetchone()
+        if row is None:
+            return {'classification':'NO_AUTHENTICATED_ACCOUNT_OBSERVATION'}
+        if hashlib.sha256(row['overview_json'].encode()).hexdigest()!=row['overview_sha256']:
+            return {'classification':'LOCAL_INTEGRITY_FAILURE'}
+        return json.loads(row['overview_json'])
 
     def create(self, network, account_id, rq, market_id):
         if network != 'testnet':

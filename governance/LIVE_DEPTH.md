@@ -13,13 +13,20 @@ User/operator creates or detects an uncertain Perpl order → agent/service obta
 - Market context is separate from authenticated wallet/order history. The two HTTP snapshots are **not atomic**, even if block numbers match.
 - CI verification is a live source probe, not evidence that an external user used the app. Authentic account reads, incidents and actual recovery remain **BLOCKED**.
 
-## Perpl credential milestone — user report, not independently verified
+## First owner-observed authenticated Testnet milestone — 2026-10-10
 
-The user reported creating a Perpl Testnet API key on 2026-10-10. This is a **user-reported account setup milestone**, not a live signed API verification. Do not request credentials in chat or store them in GitHub.
+**Evidence provenance: USER_REPORTED_SANITIZED_LOCAL_EXECUTION**, not independently authenticated from GitHub runners. The user ran `scripts/verify_perpl_read.ps1` from the cloned repo on Windows and supplied a redacted terminal result:
 
-The optional `perpl_auth_check.py` and masked-input `scripts/verify_perpl_read.ps1` exercise five authenticated GET routes on Monad Testnet chain 10143. Their output is redacted to endpoint statuses, counts and page-completeness flags. The keys are not written to disk or sent to GitHub.
+- **34/34** local regression tests passed.
+- `classification = PERPL_TESTNET_AUTHENTICATED_READ`, `chain_id=10143`.
+- Five signed GET routes (wallet, open orders, positions, order history, fills) each returned **HTTP 200**.
+- 0 open orders, 0 open positions, 0 first-page history events and 0 fills.
+- `exchange_writes_enabled = false`, `authenticated_core_loop_proven = false`.
+- No API token, Ed25519 secret, wallet address, balances or account id were published or recorded in this repo.
 
-The account-read status remains **BLOCKED** until the user executes the local check and reports a sanitized success result. This does not prove an actual incident was resolved or an action had an on-chain consequence.
+These signed API responses **prove connectivity to a real Perpl Testnet account at the user-reported execution time**. They do not prove testnet order placement, genuine incident observation, safe intervention, recovery or customer demand. The exact scope of the issued key is not cryptographically attested by the HTTP 200 reads.
+
+Next: run the operator interface with masked local READ credentials and exercise the newly added authenticated account overview, then inspect the current account's onchain order lifecycle when genuine activity exists.
 
 ## Evidence boundaries
 
@@ -29,7 +36,8 @@ The account-read status remains **BLOCKED** until the user executes the local ch
 | Public Perpl Testnet + Mainnet context/ticker/book through GitHub runner | LIVE_PUBLIC_OBSERVED (external probe only) |
 | Public Perpl Testnet market data in operator UI | IMPLEMENTED, not externally exercised |
 | Published Desk false-expiry incident | EXTERNAL_DOCUMENTED_HISTORICAL |
-| Read access to user's actual testnet Perpl account | BLOCKED |
+| Read access to user's actual testnet Perpl account | **PROVEN by user-provided sanitized 5/5 HTTP 200 run** |
+| Authenticated account overview inside operator UI | **IMPLEMENTED; live user exercise pending** |
 | Received order-status event from live Perpl WS | BLOCKED |
 | Approved and executed a testnet cancel | NOT_IMPLEMENTED |
 | Final position/order consequence reconciled | NOT_IMPLEMENTED |

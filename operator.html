@@ -31,6 +31,14 @@ aside{margin-top:17px;color:var(--muted);font:12px monospace}#error{display:none
 <p class="intro">Réconcilier les observations Perpl, préserver l'état UNKNOWN et obtenir une décision humaine avant toute récupération. Les données manuelles ci-dessous sont des fixtures locales, jamais des preuves LIVE.</p>
 <div class="metricrow"><div class="metric"><b id="total">0</b><small>incidents suivis</small></div><div class="metric"><b id="live">OFF</b><small>lecture authentifiée</small></div><div class="metric"><b>0</b><small>écritures exchange permises</small></div></div>
 <div id="error" role="alert"></div>
+<section style="margin-top:22px">
+<div class="label">00 · LIVE ACCOUNT / SIGNED PERPL TESTNET GET</div>
+<h2>Compte connecté — lecture authentifiée</h2>
+<p>Lire l'état réel des comptes et les activités présentes, sans envoyer d'ordre. Les identifiants, soldes et détails de wallet ne sont pas exposés ici.</p>
+<button id="accountLive" type="button">Actualiser le compte Testnet LIVE</button>
+<div class="label" id="accountTruth">AUCUN RELEVÉ AUTHENTIFIÉ DANS CETTE INTERFACE</div>
+<pre id="accountDetails">Connecter localement la clé READ et actualiser. Aucune donnée manuelle n'est considérée comme LIVE.</pre>
+</section>
 <div class="columns">
 <section>
 <div class="label">01 · INVESTIGATE</div><h2>Ouvrir un incident</h2>
@@ -86,6 +94,23 @@ async function show(id){
   el('audit').textContent=ledger.events.slice(-12).map(e=>e.created_at+' | '+e.kind+' | '+e.source).join('\n')+'\nLOCAL HASH CHAIN: '+(ledger.hash_chain_valid?'OK':'INVALID')
 }
 el('create').onsubmit=async event=>{event.preventDefault();try{let form=new FormData(event.target);let row=await api('/api/incidents',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({network:'testnet',account_id:Number(form.get('account_id')),rq:Number(form.get('rq')),market_id:Number(form.get('market_id'))})});selected=row.id;event.target.reset();await refreshPage()}catch(err){notice(err.message)}};
+el('accountLive').onclick=async()=>{
+ try{
+  let d=await api('/api/account/live-refresh',{method:'POST'});
+  el('accountTruth').textContent='SIGNED PERPL GET / TESTNET / LIVE ACCOUNT SNAPSHOTS';
+  el('accountDetails').textContent=JSON.stringify(d,null,2);
+ }catch(err){notice('No authenticated live observation: '+err.message)}
+};
+async function loadLatestAccount(){
+ try{
+  let d=await api('/api/account/latest');
+  if(d.classification==='AUTHENTICATED_PERPL_TESTNET_ACCOUNT_OVERVIEW'){
+   el('accountTruth').textContent='LAST LOCAL AUTHENTICATED OBSERVATION / '+d.retrieved_at;
+   el('accountDetails').textContent=JSON.stringify(d,null,2);
+  }
+ }catch(err){notice(err.message)}
+}
+loadLatestAccount();
 el('publicMarket').onclick=async()=>{
  try{
   let d=await api('/api/incidents/'+selected+'/public-market-refresh',{method:'POST'});

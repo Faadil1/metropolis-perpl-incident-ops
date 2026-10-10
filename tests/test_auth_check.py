@@ -10,7 +10,7 @@ def mock_response(request):
     assert request.headers.get("X-API-Signature")
     path=request.url.path
     if path.endswith("/wallet"):
-        return httpx.Response(200,json={"mt":19,"d":{"wallet":"should-not-be-printed","as":[]}})
+        return httpx.Response(200,json={"mt":19,"as":[],"addr":"should-not-be-printed"})
     if path.endswith("/orders"):
         return httpx.Response(200,json={"mt":23,"d":[{"secret":"order-info"}]})
     if path.endswith("/positions"):
@@ -50,7 +50,7 @@ def test_partial_success_never_claims_full_read():
     client=PerplReadClient("testnet","fake-token",Ed25519PrivateKey.generate())
     def handler(request):
         if request.url.path.endswith("/wallet"):
-            return httpx.Response(200,json={"mt":19,"d":{}})
+            return httpx.Response(200,json={"mt":19,"as":[]})
         return httpx.Response(403,json={"error":"forbidden"})
     result=check_authenticated_read(client,transport=httpx.MockTransport(handler))
     assert result["classification"]=="PARTIAL_PERPL_AUTHENTICATED_READ"

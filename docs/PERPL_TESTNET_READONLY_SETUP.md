@@ -60,15 +60,22 @@ On success the result prints:
 
 This sample is illustrative, not a result previously observed for your wallet. An API key that has `Trade` permission can generally read data, but use a **READ-only key** for the current phase. Never store either key in GitHub Actions, repo issues, uploaded files, screenshots or this chat.
 
-## 3. Start the operator UI (optional after verification)
+## 3. Operate the live account overview locally
 
-To load credentials for the local operator UI, start it **only on loopback** and in a terminal session that already has the same two Perpl READ credentials set as environment variables. The helper above deliberately erases both after verification; it does not silently start a background server. The application uses `127.0.0.1:8765` and is unaudited — never expose it on a public IP.
+To exercise the account with signed Perpl Testnet reads **inside the product**, use this new launcher. It asks twice for the same READ token and **Perpl Ed25519 HEX secret** with masked input, then starts the local UI. These values remain in the process environment while the local server is running and are cleared by the PowerShell script on exit; protect the computer and don't expose localhost through tunneling.
 
 ```powershell
-.\\.venv\\Scripts\\python.exe -m uvicorn app:app --host 127.0.0.1 --port 8765
+git pull --ff-only
+.\\.venv\\Scripts\\python.exe -m pip install -r requirements.txt
+.\\.venv\\Scripts\\python.exe -m pytest -q
+.\\scripts\\start_operator_readonly.ps1
 ```
 
-The initial authenticated check **does not require creating an incident or knowing `rq`**, unlike the subsequent operator workflow.
+Visit `http://127.0.0.1:8765`, then click **Actualiser le compte Testnet LIVE**. The UI shows only a sanitized account ID, exchange instance, frozen/forwarding flags, last forwarded request ID, snapshot blocks and counts — never keys, balances, wallet address or individual orders. The sanitized observation is persisted in the local SQLite runtime under `runtime/` so a restart does not erase it.
+
+**This still isn't a full core loop:** authenticated account inspection is real; no genuine incident or validated exchange action has been carried out. After using the UI, press **Ctrl+C** in PowerShell to stop the server. Do not publish `runtime/` or screenshots containing sensitive account information.
+
+The original credential-check script `verify_perpl_read.ps1` does **not** launch the UI and leaves no credentials available after it exits.
 
 ## 4. Read the result honestly
 - `404` can mean no on-chain Perpl exchange account exists; it does not prove an outage.

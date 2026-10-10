@@ -7,7 +7,7 @@ from perpl_client import PerplReadClient
 
 def payload(rq=1001, oid=77, status=4):
     return {
-        'wallet': {'mt':19,'d':{}},
+        'wallet': {'mt':19,'as':[]},
         'orders': {'mt':23,'d':[]},
         'positions': {'mt':26,'d':[]},
         'order_history': {'d':[{'rq':rq,'acc':751,'mkt':16,'oid':oid,'st':status}],'np':''},
@@ -64,7 +64,7 @@ def test_read_client_history_is_signed_and_read_only():
         assert request.method=='GET'
         assert request.headers.get('X-API-Signature')
         if request.url.path.endswith('/wallet'):
-            return httpx.Response(200,json={'mt':19,'d':{}})
+            return httpx.Response(200,json={'mt':19,'as':[]})
         if request.url.path.endswith('/orders'):
             return httpx.Response(200,json={'mt':23,'d':[]})
         if request.url.path.endswith('/positions'):

@@ -7,7 +7,10 @@ concept_lock: BLOCKED
 production_authorization: BLOCKED
 rule: every_registered_gateway_is_explicit_no_silent_skips
 negative_event_evidence: https://github.com/frankolien/desk/blob/main/docs/perpl-order-400-audit-2026-09-15.md
-truth_boundary: historical_external_incident_proven__demand_and_live_testnet_unknown
+truth_boundary: authenticated_testnet_reads_user_observed_5_of_5__core_loop_incident_and_demand_unproven
+signed_read_evidence: USER_PROVIDED_SANITIZED_LOCAL_TERMINAL_OUTPUT_2026_10_10
+signed_testnet_read_status: PROVEN
+live_order_action_status: BLOCKED
 gateways:
   CORE_LIFECYCLE: {status: ACTIVE}
   JUDGED_BUILD_CYCLE: {status: ACTIVE}
@@ -35,10 +38,11 @@ gateways:
   OSSIUM_OSS_DISCOVERY: {status: PROVEN}
   SPONSOR_NATIVE_ADVANTAGE: {status: ACTIVE}
   SPONSOR_REMOVAL_TEST: {status: BLOCKED}
-  TECHNICAL_REALITY_CHECK: {status: BLOCKED}
+  TECHNICAL_REALITY_CHECK: {status: ACTIVE}
   TRUTH_BOUNDARY: {status: ACTIVE}
   NEGATIVE_PATH: {status: ACTIVE}
   EVIDENCE_INTEGRITY: {status: ACTIVE}
+  AUTHENTICATED_TESTNET_READ: {status: PROVEN}
   CLAIM_RUNTIME_EVIDENCE_GRAPH: {status: BLOCKED}
   RUNTIME_COMMIT_BINDING: {status: BLOCKED}
   DETERMINISTIC_DEMO: {status: N/A}
