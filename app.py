@@ -7,6 +7,7 @@ from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, Field
 from incident_core import IncidentStore, MANUAL
 from perpl_client import PerplReadClient, CredentialsUnavailable
+from perpl_market import PublicMarketReader, PublicMarketUnavailable
 
 app=FastAPI(title='Perpl Incident Operations',version='0.1.0',docs_url='/api/docs',redoc_url=None)
 store=IncidentStore(os.environ.get('INCIDENT_DB_PATH',str(Path(__file__).resolve().parent/'runtime'/'incidents.sqlite3')))
@@ -67,6 +68,21 @@ def live_refresh(ident:str):
         raise HTTPException(503,'Read failed; outcome UNKNOWN; no exchange action performed')
     except Exception:
         raise HTTPException(503,'Perpl private read or public context unavailable; no live claim')
+
+@app.post('/api/incidents/{ident}/public-market-refresh')
+def public_market_refresh(ident:str):
+    item=incident_or_404(ident)
+    if item['network']!='testnet':
+        raise HTTPException(422,'testnet only')
+    try:
+        result=PublicMarketReader().refresh(item['market_id'])
+    except PublicMarketUnavailable:
+        store.log(ident,'PUBLIC_MARKET_READ_UNAVAILABLE','PERPL_PUBLIC_HTTP',
+                  {'classification':'UNKNOWN','no_order_inference':True})
+        raise HTTPException(503,'Public market data unavailable. Order status remains UNKNOWN.')
+    store.log(ident,'LIVE_PUBLIC_MARKET_CONTEXT','PERPL_PUBLIC_HTTP',
+              {**result, 'incident_id':ident})
+    return result
 
 @app.post('/api/incidents/{ident}/request-cancel-review')
 def request_review(ident:str,req:RequestReview):

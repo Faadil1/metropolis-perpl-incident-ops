@@ -45,7 +45,10 @@ aside{margin-top:17px;color:var(--muted);font:12px monospace}#error{display:none
 <p id="empty">L'état de la preuve et les prochains contrôles s'afficheront ici.</p>
 <div id="detail">
 <div id="truth">NOT LIVE / MANUAL</div><p id="state" class="status"></p><p id="reason"></p>
+<button id="publicMarket" class="secondary" type="button">Marché Testnet LIVE (public)</button>
 <button id="refresh" type="button">Lire Perpl Testnet (clé READ)</button>
+<div id="marketTruth" class="label" style="margin-top:12px">AUCUNE DONNÉE DE MARCHÉ LIVE CHARGÉE</div>
+<pre id="marketOutput">Marché public non consulté. Une cotation n'établit jamais le statut de votre ordre.</pre>
 <button id="verify" class="secondary" type="button">Vérifier journal</button>
 <aside id="readinfo"></aside>
 <div class="label" style="margin-top:20px">TRAME LOCALE · MANUAL_UNVERIFIED</div>
@@ -83,6 +86,15 @@ async function show(id){
   el('audit').textContent=ledger.events.slice(-12).map(e=>e.created_at+' | '+e.kind+' | '+e.source).join('\n')+'\nLOCAL HASH CHAIN: '+(ledger.hash_chain_valid?'OK':'INVALID')
 }
 el('create').onsubmit=async event=>{event.preventDefault();try{let form=new FormData(event.target);let row=await api('/api/incidents',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({network:'testnet',account_id:Number(form.get('account_id')),rq:Number(form.get('rq')),market_id:Number(form.get('market_id'))})});selected=row.id;event.target.reset();await refreshPage()}catch(err){notice(err.message)}};
+el('publicMarket').onclick=async()=>{
+ try{
+  let d=await api('/api/incidents/'+selected+'/public-market-refresh',{method:'POST'});
+  el('marketTruth').textContent='LIVE PUBLIC / TESTNET / NON ATOMIC / NOT ORDER PROOF';
+  el('marketOutput').textContent=JSON.stringify({market:d.symbol,mark:d.mark_price,bid:d.top_bid,ask:d.top_ask,
+   ticker_block:d.ticker_block,book_block:d.book_block,matched_block:d.same_block_observed,observed_at:d.retrieved_at},null,2);
+  await show(selected)
+ }catch(err){notice('Public market unavailable; order state unchanged: '+err.message)}
+};
 el('refresh').onclick=async()=>{try{await api('/api/incidents/'+selected+'/live-refresh',{method:'POST'});notice('Signed read completed. Check evidence and state.');await refreshPage()}catch(err){notice('LIVE NOT CONFIRMED: '+err.message)}};
 el('verify').onclick=async()=>{let d=await api('/api/incidents/'+selected+'/ledger');notice(d.hash_chain_valid?'Local journal integrity verified — not on-chain proof':'LOCAL JOURNAL INTEGRITY FAILED');await show(selected)};
 el('ingest').onclick=async()=>{try{let f=JSON.parse(el('frame').value);await api('/api/incidents/'+selected+'/manual-frame',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({frame:f})});notice('Local fixture ingested as MANUAL_UNVERIFIED');await refreshPage()}catch(err){notice(err.message)}};

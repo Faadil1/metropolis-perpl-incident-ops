@@ -19,6 +19,10 @@ negative_event:
   limitation: competitor Desk has already corrected its false-expiry bug
 differentiation: BLOCKED
 user_demand: UNKNOWN
+public_perpl_testnet_probe: PROVEN_ON_GITHUB_ACTIONS_38066778460
+public_perpl_mainnet_probe: PROVEN_ON_GITHUB_ACTIONS_38066778460
+operator_public_testnet_market_read: IMPLEMENTED_NOT_EXTERNALLY_EXERCISED
+perpl_order_fill_history: IMPLEMENTED_NOT_LIVE_VERIFIED
 live_perpl_read: BLOCKED_NO_USER_ACCOUNT_OR_TESTNET_READ_KEY
 live_perpl_write: NOT_IMPLEMENTED
 production_funds: FORBIDDEN
