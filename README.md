@@ -43,3 +43,17 @@ Current negative-path and competitor novelty gates remain active. A true busines
 See the research PR for the code baseline, tests, CI and the full conditional-gateway registry. Sources: [Perpl API docs](https://github.com/PerplFoundation/api-docs), [MetaMask Agent Wallet](https://github.com/MetaMask/agent-wallet-plugin-examples).
 
 Deadline published by Monad: **2026-10-13**; verify the exact submission time on the authenticated portal.
+
+## Genuine Testnet order milestone (owner evidence, October 10)
+
+A user-entered BTC Testnet limit order was independently observed through Perpl's
+signed account API in the local operator UI. The matching open-order/history
+identity is **proven by owner screenshot**, with commitment digest
+`b90a6004e8389540821a673d89292d60449da3cdff808c70173712869da7a0aa`.
+The actual order identifiers are intentionally not published here.
+
+The account read and order correlation are real, but the order is a *normal*
+exchange event, not an incident. A read-only lifecycle comparison can classify
+a future matching `CANCELED` history event, but **actual owner-side cancellation
+has not yet been observed** and neither canceled status nor a missing order
+automatically proves absence of fills or positions.

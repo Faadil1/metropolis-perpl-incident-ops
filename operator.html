@@ -66,6 +66,9 @@ aside{margin-top:17px;color:var(--muted);font:12px monospace}#error{display:none
 <div id="accountHistory" class="observed-orders"></div>
 <p id="accountPagination" class="observed-note"></p>
 </details>
+<div class="observed-title">Évolution vérifiée des ordres</div>
+<p class="observed-note">Entre deux lectures Perpl signées, l'ordre et son historique sont rapprochés par account + market + rq + oid. Une disparition sans statut historique reste UNKNOWN ; une annulation normale n'est pas un incident résolu.</p>
+<div id="orderLifecycle" class="observed-orders" aria-live="polite">Aucune transition observée.</div>
 <details id="accountDetailsWrap"><summary>Voir le relevé technique et la provenance</summary>
 <pre id="accountDetails">Connecter localement la clé READ et actualiser. Aucune donnée manuelle n'est considérée comme LIVE.</pre>
 </details>
@@ -204,6 +207,25 @@ function renderAccount(d,currentlyLive){
  el('accountPagination').textContent=observed.history_has_more_pages?
    'D’autres pages existent. Aucun verdict terminal ne peut être fondé sur cette seule page.':
    'Fin de pagination annoncée pour cette lecture. Aucun état passé ne doit être inféré en cas de lacunes temporelles.';
+ const lifecycleEl=el('orderLifecycle');lifecycleEl.replaceChildren();
+ const changes=d.order_lifecycle?.transitions||[];
+ if(!changes.length){
+   const item=document.createElement('div');
+   item.className='observed-note';
+   item.textContent='Aucune évolution d’ordre prouvée entre ces deux observations.';
+   lifecycleEl.append(item);
+ }else{
+   changes.forEach(t=>{
+     const div=document.createElement('div');div.className='observed-order';
+     const title=document.createElement('strong');title.textContent=t.finding;
+     const id=document.createElement('span');id.textContent='ACC '+t.account_id+
+       ' · MKT '+t.market_id+' · rq '+t.request_id+' · OID '+t.order_id;
+     const caveat=document.createElement('span');caveat.className='origin';
+     caveat.textContent='STATUT HISTORIQUE '+(t.positive_matching_history?'OBSERVÉ':'NON CONFIRMÉ')+
+       ' · CONSÉQUENCE POSITION NON VÉRIFIÉE · PAS UNE RÉCUPÉRATION';
+     div.append(title,id,caveat);lifecycleEl.append(div);
+   });
+ }
  el('accountDetails').textContent=JSON.stringify(d,null,2);
 }
 el('accountLive').onclick=async()=>{

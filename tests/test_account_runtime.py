@@ -114,3 +114,32 @@ def test_operator_read_includes_only_real_signed_order_data(monkeypatch,tmp_path
     assert observed[0]['incident_detected'] is False
     assert '"p": 123' not in result.text
     assert cli.get('/api/incidents').json()['items']==[]
+
+def test_signed_open_then_cancel_lifecycle_not_called_incident(monkeypatch,tmp_path):
+    import importlib
+    app_module=importlib.import_module('app')
+    app_module.store=IncidentStore(str(tmp_path/'lifecycle.sqlite3'))
+    a=signed_example()
+    a['orders']['d']=[{'acc':800,'mkt':16,'rq':908,'oid':77,'st':2}]
+    a['order_history']['d']=[{'acc':800,'mkt':16,'rq':908,'oid':77,'st':2}]
+    b=signed_example()
+    b['order_history']['d']=[{'acc':800,'mkt':16,'rq':908,'oid':77,'st':5}]
+    stream=[a,b]
+    class MockRead:
+        @classmethod
+        def from_env(cls,network):
+            return cls()
+        def read_all(self):
+            return stream.pop(0)
+    monkeypatch.setattr(app_module,'PerplReadClient',MockRead)
+    client=TestClient(app_module.app)
+    first=client.post('/api/account/live-refresh')
+    assert first.status_code==200
+    assert first.json()['order_lifecycle']['transitions']==[]
+    second=client.post('/api/account/live-refresh')
+    assert second.status_code==200
+    assert second.json()['order_lifecycle']['transitions'][0]['finding']=='CANCELED_STATUS_OBSERVED'
+    assert second.json()['order_lifecycle']['incident_recovery_proven'] is False
+    assert client.get('/api/incidents').json()['items']==[]
+    last=client.get('/api/account/latest')
+    assert last.json()['order_lifecycle']['transitions'][0]['order_id']==77

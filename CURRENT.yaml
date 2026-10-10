@@ -68,7 +68,7 @@ owner_operator_second_verified_screenshot:
   no_real_order_or_incident_proven: true
   screenshot_publication: NOT_AUTHORIZED
 live_read_comparison_in_operator_ui: PROVEN_BY_OWNER_SCREENSHOT_NO_CHANGE
-real_order_observer: IMPLEMENTED_DETAILS_NOT_YET_SEEN_IN_OWNER_UI
+real_order_observer: PROVEN_BY_OWNER_LOCAL_UI_SCREENSHOT_WITH_MATCHING_RQ_OID
 first_real_testnet_order:
   provenance: OWNER_SCREENSHOTS_PERPL_UI_AND_LOCAL_SIGNED_GET_AGGREGATES
   date: 2026-10-10
@@ -88,10 +88,27 @@ first_real_testnet_order:
     orders_block: 69900671
     positions_block: 69900672
     delta_classification: ACTIVITY_CHANGE_REVIEW_ONLY
-  request_id_rq: UNKNOWN_NOT_SHOWN_IN_OWNER_UI
-  order_id_oid: UNKNOWN_NOT_SHOWN_IN_OWNER_UI
+  request_id_rq: OBSERVED_IN_OWNER_LOCAL_UI_SCREENSHOT_NOT_PUBLISHED_IN_REPO
+  order_id_oid: OBSERVED_IN_OWNER_LOCAL_UI_SCREENSHOT_NOT_PUBLISHED_IN_REPO
+  order_identity_sha256: b90a6004e8389540821a673d89292d60449da3cdff808c70173712869da7a0aa
   incident_or_fill_proven: false
   screenshots_publication: NOT_AUTHORIZED
-  owner_local_ui_version: LIKELY_STALE_MISSING_REAL_ORDER_ROWS
+  owner_local_ui_version: REAL_ORDER_ROWS_OBSERVED
 real_order_aggregate_observation: PROVEN_BY_OWNER_LOCAL_SIGNED_UI_SCREENSHOT
-next_action: owner restart on latest research branch and verify signed rq_oid details; do not create a duplicate testnet order; then compare post-cancel state
+real_order_identity_correlation:
+  status: PROVEN_OWNER_SCREENSHOT
+  chain_id: 10143
+  account_id: 1060
+  market_id: 16
+  order_identity_sha256: b90a6004e8389540821a673d89292d60449da3cdff808c70173712869da7a0aa
+  exact_rq_oid: ON_OWNER_LOCAL_SCREENSHOT_ONLY
+  open_orders_snapshot_block: 69901507
+  wallet_snapshot_block: 69901506
+  positions_snapshot_block: 69901507
+  historic_event_same_identity: true
+  historic_event_status: OPEN
+  filled_history_first_page_count: 0
+  recovery_proven: false
+  exchange_writes_enabled: false
+normal_order_cancellation_transition: IMPLEMENTED_NOT_YET_OWNER_VERIFIED
+next_action: owner cancel exactly the observed order using official Perpl Testnet UI and verify matching signed history status through read-only local product; do not create duplicate order
