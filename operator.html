@@ -72,6 +72,37 @@ aside{margin-top:17px;color:var(--muted);font:12px monospace}#error{display:none
 <div class="observed-title">Revue des états négatifs — READ uniquement</div>
 <p class="observed-note">Seuls les refus réellement présents dans l’historique signé ou les états UNKNOWN issus d’observations signées déclenchent un signal. Un drapeau « forwarding off » ne constitue pas à lui seul un incident.</p>
 <div id="negativeReview" class="observed-orders" aria-live="polite">Aucun échec ou état UNKNOWN observé.</div>
+<div class="observed-title">Dossiers opérationnels — interventions réelles et traçables</div>
+<p class="observed-note">Chaque dossier provient d'une lecture Perpl signée. Les actions opérateur modifient réellement le journal local (ACK, HOLD, ESCALATE, RECHECK, CLOSE_REVIEW) ; elles ne passent aucun ordre et ne prouvent pas la récupération de l'exchange. Un cas UNKNOWN ne peut jamais être clôturé comme résolu sans preuve positive.</p>
+<div class="observation-grid" id="caseSummary"></div>
+<div id="operatorCases" class="observed-orders" aria-live="polite">Aucun dossier source-vérifié.</div>
+<div id="caseDetail" hidden>
+<h3 id="caseTitle">Dossier</h3>
+<pre id="caseData"></pre>
+<div class="columns">
+<section>
+<label>Opérateur local <input id="operatorName" type="text" maxlength="80" placeholder="Operator local"/></label>
+<label>Décision
+<select id="operatorAction">
+<option value="ACKNOWLEDGE">Reconnaître</option>
+<option value="HOLD">Mettre en attente / bloquer toute nouvelle soumission</option>
+<option value="ESCALATE">Escalader</option>
+<option value="REQUEST_RECHECK">Demander une nouvelle lecture Perpl</option>
+<option value="CLOSE_REVIEW">Clore la revue (refus confirmé uniquement)</option>
+</select></label>
+<label>Justification (12 caractères minimum)
+<textarea id="operatorReason" rows="3" maxlength="1000" placeholder="Décrire la vérification et la justification"></textarea>
+</label>
+<button id="caseDecide" type="button">Enregistrer la décision locale</button>
+<button id="caseRecheck" type="button" class="secondary">Relire Perpl Testnet avec signature</button>
+</section>
+<section>
+<div class="label">JOURNAL OPÉRATEUR LOCAL · CHAÎNE D'EMPREINTES</div>
+<div id="caseAuditStatus">Non vérifié</div>
+<pre id="caseAudit">Aucun événement.</pre>
+</section>
+</div>
+</div>
 <details id="accountDetailsWrap"><summary>Voir le relevé technique et la provenance</summary>
 <pre id="accountDetails">Connecter localement la clé READ et actualiser. Aucune donnée manuelle n'est considérée comme LIVE.</pre>
 </details>
@@ -112,6 +143,54 @@ aside{margin-top:17px;color:var(--muted);font:12px monospace}#error{display:none
 </main>
 <script>
 const el=id=>document.getElementById(id);let selected=null;
+let selectedCase=null;
+let sessionKey=null;
+async function loadOperatorSession(){
+  const s=await api('/api/ops/session');
+  sessionKey=s.operator_session;
+}
+async function refreshCases(){
+  const result=await api('/api/ops/cases');
+  const rows=result.items||[];
+  const cases=el('operatorCases');cases.replaceChildren();
+  const summary=el('caseSummary');summary.replaceChildren();
+  const count=rows.filter(c=>c.state!=='REVIEW_CLOSED').length;
+  for(const [label,n] of [['Dossiers attestés',rows.length],['À examiner',count]]){
+   const box=document.createElement('div');box.className='observation-cell';
+   const b=document.createElement('b');b.textContent=String(n);
+   const span=document.createElement('span');span.textContent=label;box.append(b,span);summary.append(box);
+  }
+  if(!rows.length){cases.textContent='Aucun dossier opérationnel source-vérifié. Un compte normal n’est pas un incident.';return;}
+  for(const item of rows){
+   const row=document.createElement('button');row.type='button';row.className='secondary';
+   row.style.textAlign='left';row.style.width='100%';row.style.whiteSpace='normal';
+   row.textContent=item.state+' · '+item.kind+' · ACC '+item.account_id+
+     ' · MKT '+item.market_id+' · rq '+item.request_id+
+     ' · v'+item.version;
+   row.onclick=()=>showOperatorCase(item.id);
+   cases.append(row);
+  }
+  if(selectedCase && rows.some(c=>c.id===selectedCase)){
+   await showOperatorCase(selectedCase);
+  }
+}
+async function showOperatorCase(id){
+ selectedCase=id;
+ const data=await api('/api/ops/cases/'+id);
+ el('caseDetail').hidden=false;
+ el('caseTitle').textContent='Dossier '+data.kind+' · état '+data.state+' · version '+data.version;
+ el('caseData').textContent=JSON.stringify({
+    case_id:data.id,account_id:data.account_id,market_id:data.market_id,
+    request_id:data.request_id,order_id:data.order_id,status:data.state,
+    evidence:data.latest_evidence,first_seen:data.first_seen_at,last_seen:data.last_seen_at,
+    exchange_writes_enabled:false,incident_recovery_proven:false
+ },null,2);
+ const ledger=await api('/api/ops/cases/'+id+'/ledger');
+ el('caseAuditStatus').textContent=ledger.hash_chain_valid?
+    'Chaîne locale valide, PAS une attestation immutable externe':'ALERTE : chaîne locale altérée';
+ el('caseAudit').textContent=ledger.events.map(x=>x.created_at+' | '+x.kind+' | '+x.actor).join('\n');
+}
+
 function notice(msg){let box=el('error');box.style.display='block';box.textContent=msg}
 async function api(url,init){let res=await fetch(url,init);let data=await res.json();if(!res.ok)throw Error(data.detail||'Service unavailable');return data}
 async function refreshPage(){
@@ -267,6 +346,7 @@ el('accountLive').onclick=async()=>{
   let d=await api('/api/account/live-refresh',{method:'POST'});
   el('accountTruth').textContent='SIGNED PERPL GET / TESTNET / LIVE ACCOUNT SNAPSHOTS';
   renderAccount(d,true);
+  await refreshCases();
  }catch(err){notice('No authenticated live observation: '+err.message)}
 };
 async function loadLatestAccount(){
@@ -279,6 +359,40 @@ async function loadLatestAccount(){
  }catch(err){notice(err.message)}
 }
 loadLatestAccount();
+loadOperatorSession().then(refreshCases).catch(err=>notice('Operator session: '+err.message));
+el('caseDecide').onclick=async()=>{
+ if(!selectedCase){notice('Sélectionnez un dossier.');return;}
+ try{
+  if(!sessionKey)await loadOperatorSession();
+  const cur=await api('/api/ops/cases/'+selectedCase);
+  const action=el('operatorAction').value;
+  const actor=el('operatorName').value.trim();
+  const reason=el('operatorReason').value.trim();
+  const request={
+   action,actor,reason,expected_version:cur.version,
+   idempotency_key:crypto.randomUUID()
+  };
+  await api('/api/ops/cases/'+selectedCase+'/decision',{
+   method:'POST',headers:{'Content-Type':'application/json','X-Operator-Session':sessionKey},
+   body:JSON.stringify(request)
+  });
+  notice('Décision LOCALE sauvegardée : '+action+' · AUCUN ordre envoyé à Perpl');
+  await refreshCases();
+ }catch(err){notice('Décision refusée : '+err.message)}
+};
+el('caseRecheck').onclick=async()=>{
+ if(!selectedCase)return;
+ try{
+  if(!sessionKey)await loadOperatorSession();
+  const d=await api('/api/ops/cases/'+selectedCase+'/recheck',{
+   method:'POST',headers:{'X-Operator-Session':sessionKey}
+  });
+  renderAccount(d.signed_observation,true);
+  await refreshCases();
+  notice('Relecture authentifiée effectuée. AUCUNE récupération ou écriture exchange supposée.');
+ }catch(err){notice('Relecture indisponible : '+err.message)}
+};
+
 el('publicMarket').onclick=async()=>{
  try{
   let d=await api('/api/incidents/'+selected+'/public-market-refresh',{method:'POST'});
