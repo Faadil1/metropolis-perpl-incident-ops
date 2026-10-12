@@ -27,7 +27,7 @@ def _event(item, source, block, fills):
     # Only FAILED history records can be accepted without a valid oid.
     oid=item.get("oid")
     if type(oid) is not int or oid<=0:
-        if item["st"]==7 and source=="AUTHENTICATED_HISTORY_FIRST_PAGE" and oid in (0,None):
+        if item["st"]==7 and source in ("AUTHENTICATED_HISTORY_FIRST_PAGE","AUTHENTICATED_SIGNED_HISTORY_PAGINATED") and oid in (0,None):
             oid=None
         else:
             raise OrderObservationInvalid("non-failed order requires positive oid")
@@ -69,21 +69,39 @@ def summarize_observed_orders(raw,limit=30):
     if o.get("mt")!=23 or not isinstance(hist.get("np",""),str) or not isinstance(fills.get("np",""),str):
         raise OrderObservationInvalid("invalid endpoint schema")
     owned_ids={a.get("id") for a in w["as"] if isinstance(a,dict) and type(a.get("id")) is int}
-    def scanned(items,source,block):
+    def scanned(items,source,block,max_rows=limit):
         all_count=len(items)
         rows=[]
-        for item in items[:limit]:
+        for item in items[:max_rows]:
             e=_event(item,source,block,fills["d"])
             if e["account_id"] not in owned_ids:
                 raise OrderObservationInvalid("order account does not match signed wallet")
             rows.append(e)
         return {"available_count":all_count,"shown_count":len(rows),"rows":rows,
-                "display_truncated":all_count>limit}
+                "display_truncated":all_count>max_rows}
+    scan=raw.get("order_history_scan")
+    if scan is not None:
+        if (not isinstance(scan,dict) or scan.get("source")!="BOUNDED_SIGNED_PERPL_HISTORY_GET"
+            or not isinstance(scan.get("pages"),list) or not 1<=len(scan["pages"])<=10
+            or scan.get("page_count")!=len(scan["pages"]) or scan["pages"][0]!=hist
+            or type(scan.get("complete")) is not bool):
+            raise OrderObservationInvalid("invalid signed history scan")
+        history_items=[]
+        for page in scan["pages"]:
+            if not isinstance(page,dict) or not isinstance(page.get("d"),list):
+                raise OrderObservationInvalid("invalid additional history page")
+            history_items.extend(page["d"])
+        history_evidence=scanned(history_items,"AUTHENTICATED_SIGNED_HISTORY_PAGINATED",None,max_rows=1000)
+        history_evidence.update({"pages_scanned":len(scan["pages"]),"scan_complete":scan["complete"]})
+    else:
+        history_evidence=scanned(hist["d"],"AUTHENTICATED_HISTORY_FIRST_PAGE",None,max_rows=1000)
+        history_evidence.update({"pages_scanned":1,"scan_complete":not bool(hist.get("np"))})
     return {
         "classification":"PERPL_SIGNED_ORDER_OBSERVATIONS",
         "network":"testnet","chain_id":10143,
         "open_orders":scanned(o["d"],"AUTHENTICATED_OPEN_ORDER_SNAPSHOT",o.get("sn")),
         "history_page_1":scanned(hist["d"],"AUTHENTICATED_HISTORY_FIRST_PAGE",None),
+        "history_scan":history_evidence,
         "history_has_more_pages":bool(hist["np"]),
         "fills_first_page_count":len(fills["d"]),
         "fills_has_more_pages":bool(fills["np"]),

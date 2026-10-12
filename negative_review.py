@@ -31,7 +31,7 @@ def review_signed_negative_paths(observation):
     observed=observation.get("observed_orders",{})
     if not isinstance(observed,dict) or observed.get("classification")!="PERPL_SIGNED_ORDER_OBSERVATIONS":
         raise ValueError("no matching signed Perpl order observations")
-    history=observed.get("history_page_1",{})
+    history=observed.get("history_scan") or observed.get("history_page_1",{})
     if not isinstance(history,dict) or not isinstance(history.get("rows"),list):
         raise ValueError("invalid first-page evidence")
     owned={r.get("account_id"):r for r in observation.get("accounts",[])
@@ -39,7 +39,7 @@ def review_signed_negative_paths(observation):
     cases=[]
     seen=set()
     for item in history["rows"]:
-        if not isinstance(item,dict) or item.get("source")!="AUTHENTICATED_HISTORY_FIRST_PAGE":
+        if not isinstance(item,dict) or item.get("source") not in ("AUTHENTICATED_HISTORY_FIRST_PAGE","AUTHENTICATED_SIGNED_HISTORY_PAGINATED"):
             raise ValueError("unsigned or malformed history evidence")
         if item.get("status_code")!=7:
             continue
@@ -78,7 +78,7 @@ def review_signed_negative_paths(observation):
           "retries_authorized":False,
           "exchange_writes_enabled":False,
           "incident_recovery_proven":False,
-          "evidence":"PERPL_SIGNED_FIRST_HISTORY_PAGE",
+          "evidence":("PERPL_SIGNED_BOUNDED_HISTORY" if item.get("source")=="AUTHENTICATED_SIGNED_HISTORY_PAGINATED" else "PERPL_SIGNED_FIRST_HISTORY_PAGE"),
         })
     for t in observation.get("order_lifecycle",{}).get("transitions",[]):
         if not isinstance(t,dict):
@@ -106,4 +106,6 @@ def review_signed_negative_paths(observation):
     result["review_required"]=bool(cases)
     result["first_history_page_incomplete"]=bool(observed.get("history_has_more_pages"))
     result["first_page_history_display_truncated"]=bool(history.get("display_truncated"))
+    result["history_pages_scanned"]=history.get("pages_scanned",1)
+    result["history_scan_complete"]=history.get("scan_complete",False)
     return result

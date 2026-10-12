@@ -26,7 +26,7 @@ def compare_order_lifecycle(previous,current,earlier=()):
           "exchange_writes_enabled":False}
     if not isinstance(current,dict) or current.get("classification")!="AUTHENTICATED_PERPL_TESTNET_ACCOUNT_OVERVIEW":
         return base
-    here=_rows(current,"open_orders");history=_rows(current,"history_page_1")
+    here=_rows(current,"open_orders");history=_rows(current,"history_scan") or _rows(current,"history_page_1")
     if here is None or history is None:
         return {**base,"classification":"ORDER_ROW_EVIDENCE_MISSING"}
     if here.get("display_truncated"):
@@ -89,7 +89,8 @@ def compare_order_lifecycle(previous,current,earlier=()):
             "previously_observed_at":prior["observed_at"],
             "finding":finding,
             "positive_matching_history":selected is not None,
-            "history_first_page_only":True,
+            "history_first_page_only":history.get("pages_scanned",1)==1,
+            "history_scan_complete":history.get("scan_complete",False),
             "first_page_fill_for_order_observed":any(bool(e.get("fill_found_first_page")) for e in events),
             "position_consequence_verified":False,
             "incident_recovery_proven":False

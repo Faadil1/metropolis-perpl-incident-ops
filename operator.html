@@ -298,9 +298,14 @@ function renderAccount(d,currentlyLive){
  };
  renderList('open_orders',el('accountOrders'));
  renderList('history_page_1',el('accountHistory'));
- el('accountPagination').textContent=observed.history_has_more_pages?
-   'D’autres pages existent. Aucun verdict terminal ne peut être fondé sur cette seule page.':
-   'Fin de pagination annoncée pour cette lecture. Aucun état passé ne doit être inféré en cas de lacunes temporelles.';
+ const scan=d.history?.order_history||{};
+ el('accountPagination').textContent=
+   'Historique signé : '+String(scan.pages_scanned??1)+' page(s) parcourue(s), '+
+   String(scan.events_scanned??scan.first_page_count??0)+' événement(s) lus. '+
+   (scan.scan_complete?
+     'Fin de pagination annoncée pour ce relevé ; les lacunes temporelles restent possibles.':
+     'Pagination limitée ou incomplète : aucune absence d’événement ne peut être prouvée.');
+
  const lifecycleEl=el('orderLifecycle');lifecycleEl.replaceChildren();
  const changes=d.order_lifecycle?.transitions||[];
  if(!changes.length){

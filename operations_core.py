@@ -110,8 +110,8 @@ class OperatorCases:
             if case["kind"]=="POSITIVE_EXCHANGE_FAILURE_EVENT":
                 # All failed cases must be grounded in a valid, signed first-page
                 # FAILED (st=7) observation for the same account/market/rq/oid.
-                history=observation.get("observed_orders",{}).get("history_page_1",{}).get("rows",[])
-                if not any(e.get("source")=="AUTHENTICATED_HISTORY_FIRST_PAGE" and
+                history=(observation.get("observed_orders",{}).get("history_scan") or observation.get("observed_orders",{}).get("history_page_1",{})).get("rows",[])
+                if not any(e.get("source") in ("AUTHENTICATED_HISTORY_FIRST_PAGE","AUTHENTICATED_SIGNED_HISTORY_PAGINATED") and
                    e.get("status_code")==7 and e.get("account_id")==a and
                    e.get("market_id")==m and e.get("request_id")==r and
                    e.get("order_id")==oid for e in history):
@@ -253,7 +253,7 @@ class OperatorCases:
                 raise CaseForbidden("closed case requires explicit escalation to reopen")
             if action=="CLOSE_REVIEW":
                 confirmed_failure=(row["kind"]=="POSITIVE_EXCHANGE_FAILURE_EVENT" and
-                                   row["source"]=="PERPL_SIGNED_FIRST_HISTORY_PAGE")
+                                   row["source"] in ("PERPL_SIGNED_FIRST_HISTORY_PAGE","PERPL_SIGNED_BOUNDED_HISTORY"))
                 terminal_review=(row["kind"]=="UNRESOLVED_ORDER_OUTCOME" and
                     row["last_venue_verdict"] in (
                         "CANCELED_STATUS_OBSERVED","FILLED_STATUS_OBSERVED",

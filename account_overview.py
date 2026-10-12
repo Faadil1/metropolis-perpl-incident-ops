@@ -40,8 +40,20 @@ def from_signed_snapshots(data):
         item=data.get(label)
         if not isinstance(item,dict) or not isinstance(item.get('d'),list) or not isinstance(item.get('np',''),str):
             raise AccountOverviewInvalid(f"invalid {label} history")
-        pages[label]={'first_page_count':len(item['d']),
-                      'has_more_pages':bool(item.get('np'))}
+        scan=data.get(label+'_scan')
+        if scan is not None:
+            if (not isinstance(scan,dict) or scan.get('source')!='BOUNDED_SIGNED_PERPL_HISTORY_GET'
+                or not isinstance(scan.get('pages'),list) or not scan['pages']
+                or scan.get('page_count')!=len(scan['pages'])
+                or scan['pages'][0]!=item or type(scan.get('complete')) is not bool):
+                raise AccountOverviewInvalid(f'unverifiable {label} signed scan')
+        pages[label]={
+            'first_page_count':len(item['d']),
+            'has_more_pages':bool(item.get('np')),
+            'pages_scanned':len(scan['pages']) if scan else 1,
+            'scan_complete':scan['complete'] if scan else not bool(item.get('np')),
+            'events_scanned':sum(len(p['d']) for p in scan['pages']) if scan else len(item['d'])
+        }
     return {
         "classification":"AUTHENTICATED_PERPL_TESTNET_ACCOUNT_OVERVIEW",
         "chain_id":10143, "source":"SIGNED_PERPL_HTTP_GET",
