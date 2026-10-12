@@ -1,6 +1,6 @@
 # Perpl Incident Operations — Metropolis 2026
 
-**Status:** PRE-LOCK research build · **LIVE AUTHENTICATED TESTNET READS PROVEN BY OWNER** · **LIVE CORE LOOP BLOCKED** · **NO trading/exchange writes**
+**Status:** NOT_COMPLETE · PRODUCT_EXPLOITATION PRIMARY · PRE-LOCK research build · **LIVE AUTHENTICATED TESTNET READS PROVEN BY OWNER** · **LIVE CORE LOOP BLOCKED** · **NO trading/exchange writes**
 
 A prospective operator-facing incident recovery product for Perpl on Monad. The source of truth is this repository; the historic [Valid Until](https://github.com/Faadil1/valid-until-agent-os) repository remains frozen and separate.
 
@@ -96,3 +96,11 @@ identifies extensive existing Desk, PerplBot and native Perpl capabilities;
 differentiation and buyer demand are **BLOCKED**, not assumed. No additional
 live order, TRADE API key or production funds are necessary to use this
 observability-only research increment.
+
+## Product completion cannot be substituted with proof
+
+The [Product Depth acceptance contract](./product/PRODUCT_DEPTH_ACCEPTANCE.json) is **CI-enforced** against the project's registered canonical gates. Our real owner-observed Testnet order/cancel flow **is a bounded live observation slice, not the Definition of Done**.
+
+The **primary workstream is PRODUCT_EXPLOITATION** until justified remaining functionality is complete or a legitimate stop condition fires. The next material capability is a verified problematic/uncertain Perpl order outcome and a coherent actual operator action → after-state cycle; signed-read error review alone is not incident recovery.
+
+Screenshots, receipts, replay, judge packaging or a green test count never promote this to `PRODUCT_COMPLETE`. Deadline may stop work; any incomplete product remains labeled `NOT_COMPLETE`. The [current PRD](./product/PRD.md) preserves a complete, real product goal without unjustified feature count inflation or trading without owner authorization.

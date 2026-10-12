@@ -1,5 +1,14 @@
 # Product Depth & Live Reality — pre-lock
 
+## Non-compromise priority enforcement — 2026-10-12
+
+**Primary workstream: PRODUCT_EXPLOITATION.** The real signed Perpl Testnet observation and normal cancel constitute a bounded live *observation* slice. They do not discharge the product's material commitments: a real incident, independently relevant operator pain, a safe authorized and meaningful operator action, verified after-state and operational resilience. Source contract: [PRODUCT_DEPTH_ACCEPTANCE.json](../product/PRODUCT_DEPTH_ACCEPTANCE.json).
+
+At each material work touch: inventory remaining causal product depth, select the highest-value justified delta, build into the shared live runtime, test representative success/negative/boundary/failure/recovery, and emit evidence from actual execution. Continue while justified value/differentiation outweighs cost, risk and deadline. Never stop because enough tests, screenshots, a replay or a demo exist.
+
+**Status of project:** `NOT_COMPLETE`. The first normal order cycle is `PROVEN`; the *incident core* is `BLOCKED`. The post-slice exploitation review is `ACTIVE`. Deadline or safety constraints may stop work but must not change the truthful readiness claim. This is enforcement of existing central canon, not a new stage or gate.
+
+
 **Status as of 2026-10-10: owner-observed LIVE authenticated reads in the local operator UI; LIVE CORE LOOP = BLOCKED.**
 
 ## Negative-path operator evaluation — pre-lock research 2026-10-11

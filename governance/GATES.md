@@ -1,10 +1,10 @@
-# Conditional Gateway Registry — generated readable mirror
+# Conditional Gateway Registry — readable mirror
 
-This file enumerates **all 72 registered conditional gates** in the source registry at `GATE_REGISTRY_PRELOCK.yaml` (branch `research/live-depth-foundation`). **Never treat this Markdown as the canonical authority**; update the YAML first, then regenerate this mirror. Gate statuses are strict `ACTIVE / N/A / BLOCKED / PROVEN`.
+Canonical authority: [GATE_REGISTRY_PRELOCK.yaml](../GATE_REGISTRY_PRELOCK.yaml). This page mirrors **all 72** registered gates. It is not a new product gate or stage.
 
-**Project posture (2026-10-11):** signed Perpl account reads, genuine order identity and owner-originated normal Testnet cancel reconciliation are PROVEN. **LIVE CORE LOOP, external operator demand, differentiated advantage, a genuine failed-order recovery and Concept Lock remain BLOCKED.** The 2026-10-11 signed negative-event review feature is only local-test-verified, with **no genuine Perpl failure observed**. See [research kill review](../research/NEGATIVE_EVENT_NOVELTY_REVIEW_2026-10-11.md) and [LIVE evidence boundaries](./LIVE_DEPTH.md).
+**Product Reality verdict (2026-10-12):** bounded LIVE order observation and external user Testnet cancel **PROVEN**; incident core loop, competitive differentiation and Concept Lock **BLOCKED**. Product `NOT_COMPLETE`; `PRODUCT_EXPLOITATION` primary, `POST_VERTICAL_SLICE_DEPTH_GAP_REVIEW` and `PRODUCT_EXPLOITATION_LOOP` **ACTIVE**. Video/demo/evidence are support outputs, never the core product. See [CI-enforced depth contract](../product/PRODUCT_DEPTH_ACCEPTANCE.json).
 
-| Canonical gate | Current status |
+| Registered gateway | Status |
 | --- | --- |
 | `CORE_LIFECYCLE` | **ACTIVE** |
 | `JUDGED_BUILD_CYCLE` | **ACTIVE** |
@@ -61,8 +61,8 @@ This file enumerates **all 72 registered conditional gates** in the source regis
 | `JUDGE_OPERATOR_SELF_SERVE` | **BLOCKED** |
 | `SETUP_REPRODUCIBILITY` | **ACTIVE** |
 | `CLEAN_ROOM_CORE_PATH` | **BLOCKED** |
-| `POST_VERTICAL_SLICE_DEPTH_GAP_REVIEW` | **N/A** |
-| `PRODUCT_EXPLOITATION_LOOP` | **N/A** |
+| `POST_VERTICAL_SLICE_DEPTH_GAP_REVIEW` | **ACTIVE** |
+| `PRODUCT_EXPLOITATION_LOOP` | **ACTIVE** |
 | `ACTION_DEPTH_SELECTION` | **ACTIVE** |
 | `ENGINEERING_QUALITY_ASSURANCE` | **ACTIVE** |
 | `EVAL_DRIVEN_RELIABILITY` | **ACTIVE** |
@@ -79,4 +79,4 @@ This file enumerates **all 72 registered conditional gates** in the source regis
 | `APP_KIT_EXTERNAL_PLATFORM_INTEGRATION` | **ACTIVE** |
 | `LIVE_GATEWAY` | **BLOCKED** |
 
-No gate has been silently omitted; the YAML file controls conditional transitions and adjudication. A passed unit test is not proof of an externally observed exchange failure or third-party adoption.
+This list is generated from the YAML registry; no registered gateway is silently excluded. Only verified operational evidence and authorized decisions can promote protected or material states.

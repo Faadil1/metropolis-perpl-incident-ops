@@ -6,6 +6,15 @@ allowed_statuses: [ACTIVE, N/A, BLOCKED, PROVEN]
 concept_lock: BLOCKED
 production_authorization: BLOCKED
 rule: every_registered_gateway_is_explicit_no_silent_skips
+product_completion_claim: NOT_COMPLETE
+first_bounded_live_slice: PROVEN_REAL_SIGNED_ORDER_OBSERVATION_AND_OWNER_VENUE_CANCEL_RECONCILIATION
+full_live_incident_core_loop: BLOCKED
+product_primary_workstream: PRODUCT_EXPLOITATION
+post_slice_depth_review: ACTIVE_MATERIAL_GAPS_REMAIN
+evidence_is_output_not_product: true
+vertical_slice_is_not_definition_of_done: true
+full_product_depth_contract: product/PRODUCT_DEPTH_ACCEPTANCE.json
+no_new_global_stage_or_gate: true
 negative_event_evidence: https://github.com/frankolien/desk/blob/main/docs/perpl-order-400-audit-2026-09-15.md
 truth_boundary: authenticated_testnet_reads_user_observed_5_of_5__core_loop_incident_and_demand_unproven
 signed_read_evidence: USER_PROVIDED_SANITIZED_LOCAL_TERMINAL_OUTPUT_2026_10_10
@@ -76,8 +85,8 @@ gateways:
   JUDGE_OPERATOR_SELF_SERVE: {status: BLOCKED}
   SETUP_REPRODUCIBILITY: {status: ACTIVE}
   CLEAN_ROOM_CORE_PATH: {status: BLOCKED}
-  POST_VERTICAL_SLICE_DEPTH_GAP_REVIEW: {status: N/A}
-  PRODUCT_EXPLOITATION_LOOP: {status: N/A}
+  POST_VERTICAL_SLICE_DEPTH_GAP_REVIEW: {status: ACTIVE}
+  PRODUCT_EXPLOITATION_LOOP: {status: ACTIVE}
   ACTION_DEPTH_SELECTION: {status: ACTIVE}
   ENGINEERING_QUALITY_ASSURANCE: {status: ACTIVE}
   EVAL_DRIVEN_RELIABILITY: {status: ACTIVE}

@@ -1,0 +1,136 @@
+{
+  "schema_version": 1,
+  "as_of": "2026-10-12",
+  "project": "METROPOLIS_PERPL_INCIDENT_OPERATIONS",
+  "canonical_policy": "Faadil1/faadil-agent-system/PRODUCT-REALITY-POLICY.yaml",
+  "authority": "PROJECT_LOCAL_PROJECTION_OF_ALREADY_PROMOTED_CANON__NO_NEW_GLOBAL_GATE",
+  "completion_claim": "NOT_COMPLETE",
+  "build_candidate_ready": false,
+  "concept_lock": "BLOCKED",
+  "live_incident_core_loop": "BLOCKED",
+  "first_bounded_live_slice": "PROVEN_REAL_SIGNED_ORDER_OBSERVATION_AND_OWNER_ORIGINATED_CANCEL_RECONCILIATION",
+  "first_incident_recovery_slice": "NOT_PROVEN",
+  "vertical_slice_rule": "ENTRY_POINT_NOT_DEFINITION_OF_DONE",
+  "evidence_rule": "OUTPUT_OF_REAL_PRODUCT_BEHAVIOR_NOT_PRIMARY_ENGINE",
+  "primary_workstream": "PRODUCT_EXPLOITATION",
+  "valid_stop_condition": null,
+  "workstream_drift_status": "NO_DRIFT_CLAIMED_PENDING_PER_MATERIAL_TOUCH_AUDIT",
+  "material_user_capability_delta_since_last_milestone": "SIGNED_READ_NEGATIVE_PATH_REVIEW_LOCAL_TESTED_NOT_LIVE_FAILURE_PROVEN",
+  "next_highest_value_depth_delta": "Obtain a real Perpl operator negative event or externally verifiable uncertain status, then integrate source-bound operator hold/decision and authorized safe corrective workflow into the same live core with post-action consequence verification.",
+  "next_depth_delta_priority_basis": "CORE_USER_VALUE_AND_CAUSAL_DIFFERENTIATION_BEFORE_EVIDENCE_PACKAGING",
+  "safe_action_depth": {
+    "achieved": "READ_ONLY",
+    "next_candidate": "APPROVAL_GATED_WRITE_ONLY_IF_HUMAN_AUTHORIZED_SAFE_TESTNET_ACTION_IS_MATERIAL_AND_PERMITTED",
+    "exchange_write_currently_enabled": false
+  },
+  "ready_promotion_requires": "ALL_MATERIAL_APPLICABLE_DEPTH_AND_GATE_REQUIREMENTS_PROVEN_WITH_PRIMARY_RUNTIME_EVIDENCE__NO_UNRESOLVED_DRIFT__AUTHORIZED",
+  "completion_is_not_inferred_from": [
+    "DEADLINE",
+    "GREEN_CI",
+    "PROOF_ARTIFACT_COUNT",
+    "NORMAL_CANCEL",
+    "FIRST_VERTICAL_SLICE",
+    "DEMO",
+    "REPLAY",
+    "STATIC_SCREENSHOTS",
+    "JUDGE_FLOW",
+    "SUBMISSION"
+  ],
+  "dimensions": {
+    "real_authenticated_account_read": {
+      "status": "PROVEN",
+      "material": true,
+      "evidence": [
+        "evidence/sanitized/PERPL_SIGNED_READ_2026-10-10.md"
+      ]
+    },
+    "real_normal_order_lifecycle_read": {
+      "status": "PROVEN",
+      "material": true,
+      "evidence": [
+        "evidence/sanitized/PERPL_REAL_CANCEL_FIX_OWNER_RETEST_2026-10-11.md"
+      ]
+    },
+    "genuine_negative_event_or_uncertain_outcome": {
+      "status": "BLOCKED",
+      "material": true
+    },
+    "independent_operator_problem_and_demand": {
+      "status": "BLOCKED",
+      "material": true
+    },
+    "differentiation_against_native_and_existing_clients": {
+      "status": "BLOCKED",
+      "material": true
+    },
+    "integrated_live_incident_core_loop": {
+      "status": "BLOCKED",
+      "material": true
+    },
+    "safe_authorized_corrective_action": {
+      "status": "BLOCKED",
+      "material": true
+    },
+    "verified_business_consequence_after_action": {
+      "status": "BLOCKED",
+      "material": true
+    },
+    "success_negative_boundary_recovery_paths": {
+      "status": "ACTIVE",
+      "material": true
+    },
+    "persistent_identity_state_permissions": {
+      "status": "ACTIVE",
+      "material": true
+    },
+    "websocket_gap_recovery_and_full_history_pagination": {
+      "status": "ACTIVE",
+      "material": true
+    },
+    "live_dependency_failure_and_refusal": {
+      "status": "ACTIVE",
+      "material": true
+    },
+    "real_operator_surface": {
+      "status": "PROVEN",
+      "material": true,
+      "evidence": [
+        "evidence/sanitized/PERPL_REAL_CANCEL_FIX_OWNER_RETEST_2026-10-11.md"
+      ]
+    },
+    "external_operator_trial": {
+      "status": "BLOCKED",
+      "material": true
+    },
+    "operator_judge_self_serve_on_real_shared_core": {
+      "status": "BLOCKED",
+      "material": true
+    },
+    "repeatable_setup_cleanroom_and_security": {
+      "status": "ACTIVE",
+      "material": true
+    },
+    "observable_causal_receipts_and_reality_ledger": {
+      "status": "ACTIVE",
+      "material": true
+    },
+    "time_to_first_product_value": {
+      "status": "ACTIVE",
+      "material": true
+    },
+    "operational_economics_when_material": {
+      "status": "ACTIVE",
+      "material": true
+    },
+    "post_vertical_slice_depth_gap_review": {
+      "status": "ACTIVE",
+      "material": true
+    },
+    "post_vertical_slice_product_exploitation": {
+      "status": "ACTIVE",
+      "material": true
+    }
+  },
+  "stop_policy": "A valid deadline, safety, authority, coherence or marginal-value stop can end the work but DOES_NOT_RECLASSIFY_INCOMPLETE_AS_COMPLETE",
+  "status_transitions_require": "OBSERVED_EVIDENCE_PLUS_CURRENT_CANONICAL_GATES_AND_HUMAN_AUTHORITY_WHERE_PROTECTED"
+}

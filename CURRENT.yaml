@@ -1,5 +1,5 @@
 version: 0.1.0
-date: 2026-10-11
+date: 2026-10-12
 project: METROPOLIS_PERPL_INCIDENT_OPERATIONS
 repo: Faadil1/metropolis-perpl-incident-ops
 branch: research/live-depth-foundation
@@ -163,4 +163,20 @@ negative_path_readonly_review:
 external_operator_demand: NOT_VERIFIED
 competitive_novelty: BLOCKED_DESK_PERPLBOT_NATIVE_PERPL_ALREADY_COVER_ORDER_TRACKING
 research_review: research/NEGATIVE_EVENT_NOVELTY_REVIEW_2026-10-11.md
-next_action: owner run latest read-only operator to check no false incident on normal account, then obtain real operator pain and a genuine Perpl negative event; do not manufacture orders or claim Concept Lock
+product_depth_execution:
+  canonical_policy: Faadil1/faadil-agent-system/PRODUCT-REALITY-POLICY.yaml
+  local_acceptance: product/PRODUCT_DEPTH_ACCEPTANCE.json
+  first_bounded_live_observation_slice: PROVEN
+  first_incident_core_slice: NOT_PROVEN
+  full_product_status: NOT_COMPLETE
+  concept_lock: BLOCKED
+  current_primary_workstream: PRODUCT_EXPLOITATION
+  evidence_workstream: SECONDARY_OUTPUT_OF_REAL_PRODUCT_RUNTIME
+  post_vertical_slice_depth_gap_review: ACTIVE
+  product_exploitation_loop: ACTIVE
+  justified_material_depth_gaps_remaining: true
+  proof_count_never_completes_product: true
+  exact_next_high_value_delta: SIGNED_LIVE_NEGATIVE_EVENT_TO_OPERATOR_DECISION_TO_SAFE_CORRECTION_TO_VERIFIED_CONSEQUENCE
+  valid_stop_condition: NONE
+  halt_due_to_deadline_must_not_be_reclassified_as_complete: true
+next_action: PRODUCT_EXPLOITATION remains primary; complete material live incident/operator action/real consequence path or report NOT_COMPLETE. Evidence, judge flow and packaging only secondary until gaps addressed; verify external operator pain and Concept Lock separately.
