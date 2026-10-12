@@ -214,3 +214,25 @@ def test_local_operator_cannot_issue_trade_or_fake_recovery(harness):
     for illegal in ("CANCEL_EXCHANGE_ORDER","TRADE","MARK_RECOVERED","AUTO_RETRY"):
        assert decision(client,c,action=illegal,headers=h).status_code==422
     assert cases(client)[0]["state"]=="OPEN"
+
+def test_cross_origin_cannot_trigger_read_or_modify_database(harness):
+    app,client,reads,path=harness
+    result=client.post("/api/account/live-refresh",headers={"Origin":"https://evil.invalid"})
+    assert result.status_code==403
+    assert len(reads)==1
+    assert cases(client)==[]
+    assert app.store.latest_account_observation()["classification"]=="NO_AUTHENTICATED_ACCOUNT_OBSERVATION"
+
+def test_local_session_not_available_through_cross_site_origin(harness):
+    app,client,reads,path=harness
+    result=client.get("/api/ops/session",headers={"Origin":"https://evil.invalid"})
+    assert result.status_code==403
+
+def test_monitor_control_requires_local_session(harness):
+    app,client,reads,path=harness
+    before=client.get("/api/ops/monitor")
+    assert before.status_code==200
+    assert before.json()["exchange_writes_enabled"] is False
+    result=client.post("/api/ops/monitor/start",json={"interval_seconds":45})
+    assert result.status_code==403
+    assert client.get("/api/ops/monitor").json()["enabled"] is False

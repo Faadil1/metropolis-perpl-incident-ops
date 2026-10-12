@@ -3,7 +3,7 @@ from __future__ import annotations
 import os, sqlite3, secrets, threading
 from pathlib import Path
 from fastapi import FastAPI, HTTPException, Request, Header
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from pydantic import BaseModel, Field
 from incident_core import IncidentStore, MANUAL
 from perpl_client import PerplReadClient, CredentialsUnavailable
@@ -27,6 +27,18 @@ def case_manager():
     if operations.store is not store:
         operations=OperatorCases(store)
     return operations
+
+@app.middleware("http")
+async def local_origin_boundary(request:Request,call_next):
+    # Browser-origin requests must never be allowed to trigger local signed
+    # account reads/SQLite changes from an untrusted website.
+    host=request.headers.get("host","").lower()
+    if host not in ("127.0.0.1:8765","localhost:8765","testserver"):
+        return JSONResponse({"detail":"localhost-only operator runtime"},status_code=403)
+    origin=request.headers.get("origin")
+    if origin and origin not in LOCAL_ORIGINS and origin!="http://testserver":
+        return JSONResponse({"detail":"cross-site origin blocked"},status_code=403)
+    return await call_next(request)
 
 class CreateIncident(BaseModel):
     account_id:int=Field(gt=0)
