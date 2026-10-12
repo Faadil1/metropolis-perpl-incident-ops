@@ -1,0 +1,33 @@
+name: Public Perpl API reality probe
+on:
+  push:
+    branches:
+      - research/live-depth-foundation
+    paths:
+      - 'perpl_public_probe.py'
+      - '.github/workflows/perpl-public-probe.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  public-read:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    strategy:
+      fail-fast: false
+      matrix:
+        network: [testnet, mainnet]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Fixed-host read-only public context, ticker and book
+        run: |
+          python perpl_public_probe.py --network ${{ matrix.network }} --output evidence/public/${{ matrix.network }}.json
+          cat evidence/public/${{ matrix.network }}.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: perpl-public-${{ matrix.network }}-${{ github.run_id }}
+          path: evidence/public/${{ matrix.network }}.json
+          retention-days: 7

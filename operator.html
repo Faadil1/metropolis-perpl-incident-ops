@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Perpl / Incident Operations — Local Research</title>
+<style>
+:root{--bg:#f2ede3;--panel:#faf7f0;--ink:#2d2d29;--muted:#777368;--rule:#d1c9b9;--orange:#974c32;--green:#27674b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,sans-serif}
+header{display:flex;gap:20px;justify-content:space-between;align-items:center;border-bottom:1px solid var(--rule);padding:19px max(22px,4vw)}
+.brand{font-weight:820;letter-spacing:-.04em;font-size:22px}.label{font:700 11px/1.5 monospace;letter-spacing:.035em;color:var(--orange)}
+main{max-width:1300px;margin:auto;padding:30px max(22px,4vw)}h1{font:700 clamp(30px,5vw,57px)/1.03 Georgia,serif;letter-spacing:-.04em;margin:5px 0 14px}
+p{color:var(--muted);margin:0 0 17px}.intro{max-width:740px}.columns{display:grid;grid-template-columns:minmax(300px,.9fr) minmax(360px,1.35fr);gap:18px;margin-top:26px}
+section{border:1px solid var(--rule);background:var(--panel);padding:22px}h2{font:700 22px/1.3 Georgia,serif;margin:5px 0 14px}.metricrow{display:flex;gap:25px;flex-wrap:wrap;margin-top:20px}
+.metric{border-top:1px solid var(--rule);min-width:120px;padding-top:8px}.metric b{display:block;font-size:24px}.metric small{color:var(--muted)}
+label{display:block;font:12px/2 monospace;color:var(--muted);margin-top:8px}input,textarea{width:100%;border:1px solid var(--rule);background:#fff;padding:9px 11px;font:14px/1.4 system-ui}
+button{border:1px solid var(--ink);background:var(--ink);color:white;font:600 13px system-ui;padding:11px 13px;cursor:pointer;margin:9px 7px 5px 0}
+button.secondary{background:transparent;color:var(--ink)}button:hover{opacity:.83}button:focus,input:focus,textarea:focus{outline:2px solid var(--orange);outline-offset:2px}
+.item{padding:13px 2px;border-bottom:1px solid var(--rule);cursor:pointer}.item:hover{color:var(--orange)}
+.item small{display:block;color:var(--muted);font:11px monospace}.status{font:700 13px monospace;color:var(--orange);overflow-wrap:anywhere}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#eae5db;padding:12px;font:11px/1.5 monospace;max-height:330px;overflow:auto}
+aside{margin-top:17px;color:var(--muted);font:12px monospace}#error{display:none;padding:10px;background:#ffeadd;margin:15px 0;border:1px solid #c38d73}
+#detail{display:none}#truth{color:var(--green);font:700 12px monospace}
+.observation-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px;margin:15px 0}
+.observation-cell{background:#eee9df;border-top:2px solid var(--rule);padding:12px}
+.observation-cell b{display:block;font:700 21px/1.3 system-ui;overflow-wrap:anywhere}
+.observation-cell span{display:block;color:var(--muted);font:12px/1.5 system-ui}
+.observation-flags{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 12px}
+.observation-flag{border:1px solid var(--rule);padding:5px 8px;font:12px/1.5 monospace}
+.observation-warning{color:var(--orange);font-weight:700}
+#accountDetailsWrap{margin-top:12px}
+#accountDetailsWrap summary{cursor:pointer;font:600 12px system-ui}
+#accountSignals{margin-top:10px;font:13px/1.5 system-ui}
+.observed-title{font:700 15px/1.4 system-ui;margin:17px 0 5px}
+.observed-note{font:12px/1.5 system-ui;color:var(--muted);margin-bottom:10px}
+.observed-orders{display:grid;gap:7px}
+.observed-order{border:1px solid var(--rule);padding:10px;background:#f6f1e8;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.observed-order strong{font:700 12px monospace}
+.observed-order span{font:12px/1.5 monospace}
+.observed-order .origin{color:var(--orange)}
+
+
+@media(max-width:850px){.columns{grid-template-columns:1fr}header{align-items:start}.brand{font-size:18px}}@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header><div class="brand">PERPL / INCIDENT OPERATIONS</div><div class="label">RESEARCH · TESTNET ONLY · NO EXCHANGE WRITES</div></header>
+<main>
+<div class="label">OPERATIONS / CONTROL PLANE</div>
+<h1>Quand l'ordre devient incertain,<br>l'action s'arrête.</h1>
+<p class="intro">Réconcilier les observations Perpl, préserver l'état UNKNOWN et obtenir une décision humaine avant toute récupération. Les données manuelles ci-dessous sont des fixtures locales, jamais des preuves LIVE.</p>
+<div class="metricrow"><div class="metric"><b id="total">0</b><small>incidents suivis</small></div><div class="metric"><b id="live">OFF</b><small>lecture authentifiée</small></div><div class="metric"><b>0</b><small>écritures exchange permises</small></div></div>
+<div id="error" role="alert"></div>
+<section style="margin-top:22px">
+<div class="label">00 · LIVE ACCOUNT / SIGNED PERPL TESTNET GET</div>
+<h2>Compte connecté — lecture authentifiée</h2>
+<p>Lire l'état réel des comptes et les activités présentes, sans envoyer d'ordre. Les identifiants, soldes et détails de wallet ne sont pas exposés ici.</p>
+<button id="accountLive" type="button">Actualiser le compte Testnet LIVE</button>
+<div class="label" id="accountTruth">AUCUN RELEVÉ AUTHENTIFIÉ DANS CETTE INTERFACE</div>
+<div id="accountSummary" class="observation-grid" aria-live="polite"></div>
+<div id="accountFlags" class="observation-flags"></div>
+<div id="accountSignals">Aucun résultat : cliquez pour obtenir la première observation. Aucun incident n'est inféré d'un compte vide.</div>
+<div class="observed-title">Ordres réellement observés</div>
+<p class="observed-note">Les ordres apparaissent uniquement s'ils figurent dans les lectures Perpl signées. Aucun ordre n'est créé ici. Un événement historique ne suffit pas à démontrer une conséquence sur les positions.</p>
+<div id="accountOrders" class="observed-orders" aria-live="polite">Aucun ordre observé.</div>
+<details id="accountHistoryWrap"><summary>Historique des ordres — première page seulement</summary>
+<div id="accountHistory" class="observed-orders"></div>
+<p id="accountPagination" class="observed-note"></p>
+</details>
+<div class="observed-title">Évolution vérifiée des ordres</div>
+<p class="observed-note">Entre deux lectures Perpl signées, l'ordre et son historique sont rapprochés par compte + marché + oid, tout en conservant les rq distincts de création et d'annulation. Une disparition sans statut historique reste UNKNOWN ; une annulation normale n'est pas un incident résolu.</p>
+<div id="orderLifecycle" class="observed-orders" aria-live="polite">Aucune transition observée.</div>
+<div class="observed-title">Revue des états négatifs — READ uniquement</div>
+<p class="observed-note">Seuls les refus réellement présents dans l’historique signé ou les états UNKNOWN issus d’observations signées déclenchent un signal. Un drapeau « forwarding off » ne constitue pas à lui seul un incident.</p>
+<div id="negativeReview" class="observed-orders" aria-live="polite">Aucun échec ou état UNKNOWN observé.</div>
+<div class="observed-title">Dossiers opérationnels — interventions réelles et traçables</div>
+<p class="observed-note">Chaque dossier provient d'une lecture Perpl signée. Les actions opérateur modifient réellement le journal local. HOLD ne bloque PAS les autres clients Perpl. Aucune transaction exchange, aucune récupération automatique.</p>
+<div class="observation-grid" id="caseSummary"></div>
+<div id="operatorCases" class="observed-orders" aria-live="polite">Aucun dossier source-vérifié.</div>
+<div class="observed-title">Surveillance locale continue — lectures Perpl signées</div>
+<p class="observed-note">Le même cœur de lecture et de dossiers fonctionne automatiquement toutes les 45 secondes si vous l'activez. C'est un monitor LOCAL facultatif, pas un service production haute disponibilité. Aucun ordre ni retrait n'est possible.</p>
+<div class="observed-order">
+<span id="monitorStatus">Surveillance désactivée</span>
+<button id="monitorStart" type="button" class="secondary">Activer le suivi signé (45 s)</button>
+<button id="monitorStop" type="button" class="secondary">Arrêter le suivi</button>
+</div>
+<div id="caseDetail" hidden>
+<h3 id="caseTitle">Dossier</h3>
+<pre id="caseData"></pre>
+<div class="columns">
+<section>
+<label>Opérateur local <input id="operatorName" type="text" maxlength="80" placeholder="Operator local"/></label>
+<label>Décision
+<select id="operatorAction">
+<option value="ACKNOWLEDGE">Reconnaître</option>
+<option value="HOLD">Mettre en attente (signal local, ne bloque pas les autres clients Perpl)</option>
+<option value="ESCALATE">Escalader</option>
+<option value="REQUEST_RECHECK">Demander une nouvelle lecture Perpl</option>
+<option value="CLOSE_REVIEW">Clore la revue (refus confirmé uniquement)</option>
+</select></label>
+<label>Justification (12 caractères minimum)
+<textarea id="operatorReason" rows="3" maxlength="1000" placeholder="Décrire la vérification et la justification"></textarea>
+</label>
+<button id="caseDecide" type="button">Enregistrer la décision locale</button>
+<button id="caseRecheck" type="button" class="secondary">Relire Perpl Testnet avec signature</button>
+</section>
+<section>
+<div class="label">JOURNAL OPÉRATEUR LOCAL · CHAÎNE D'EMPREINTES</div>
+<div id="caseAuditStatus">Non vérifié</div>
+<pre id="caseAudit">Aucun événement.</pre>
+</section>
+</div>
+</div>
+<details id="accountDetailsWrap"><summary>Voir le relevé technique et la provenance</summary>
+<pre id="accountDetails">Connecter localement la clé READ et actualiser. Aucune donnée manuelle n'est considérée comme LIVE.</pre>
+</details>
+</section>
+<details id="researchLab">
+<summary style="cursor:pointer;margin:24px 0 12px;font:700 12px/1.5 monospace;letter-spacing:.03em">LABORATOIRE DE RECHERCHE LOCAL — ouvrir les incidents manuels / fixtures non LIVE</summary>
+<p class="observed-note">Le parcours opérationnel principal se trouve dans les observations signées ci-dessus. Les valeurs saisies manuellement dans cette section ne prouvent jamais une activité Perpl.</p>
+<div class="columns">
+<section>
+<div class="label">RESEARCH 01 · MANUAL_UNVERIFIED</div><h2>Ouvrir un incident</h2>
+<form id="create"><label>Account ID <input type="number" name="account_id" min="1" required placeholder="751"></label>
+<label>Request ID / rq <input type="number" name="rq" min="1" required placeholder="1001"></label>
+<label>Market ID / mkt <input type="number" name="market_id" min="0" required placeholder="1"></label>
+<button type="submit">Créer</button></form>
+<div class="label" style="margin-top:22px">INCIDENTS</div><div id="list"><p>Aucun incident.</p></div>
+</section>
+<section>
+<div class="label">02 · RECONCILE</div><h2 id="selected_title">Sélectionner un incident</h2>
+<p id="empty">L'état de la preuve et les prochains contrôles s'afficheront ici.</p>
+<div id="detail">
+<div id="truth">NOT LIVE / MANUAL</div><p id="state" class="status"></p><p id="reason"></p>
+<button id="publicMarket" class="secondary" type="button">Marché Testnet LIVE (public)</button>
+<button id="refresh" type="button">Lire Perpl Testnet (clé READ)</button>
+<div id="marketTruth" class="label" style="margin-top:12px">AUCUNE DONNÉE DE MARCHÉ LIVE CHARGÉE</div>
+<pre id="marketOutput">Marché public non consulté. Une cotation n'établit jamais le statut de votre ordre.</pre>
+<button id="verify" class="secondary" type="button">Vérifier journal</button>
+<aside id="readinfo"></aside>
+<div class="label" style="margin-top:20px">TRAME LOCALE · MANUAL_UNVERIFIED</div>
+<p>Une trame saisie ici ne devient jamais une observation provenant de Perpl.</p>
+<textarea id="frame" rows="6" spellcheck="false"></textarea>
+<button id="ingest" class="secondary" type="button">Tester trame locale</button>
+<div class="label" style="margin-top:17px">AUDIT LOG LOCAL</div><pre id="audit">Aucune preuve.</pre>
+</div>
+</section>
+</div>
+</details>
+<aside>Source: Perpl API officielle · incident Desk 15 sept 2026. Ne saisir aucune clé privée ou donnée sensible dans cette interface.</aside>
+</main>
+<script>
+const el=id=>document.getElementById(id);let selected=null;
+let selectedCase=null;
+let sessionKey=null;
+async function loadOperatorSession(){
+  const s=await api('/api/ops/session');
+  sessionKey=s.operator_session;
+}
+async function refreshCases(){
+  const result=await api('/api/ops/cases');
+  const rows=result.items||[];
+  const cases=el('operatorCases');cases.replaceChildren();
+  const summary=el('caseSummary');summary.replaceChildren();
+  const count=rows.filter(c=>c.state!=='REVIEW_CLOSED').length;
+  for(const [label,n] of [['Dossiers attestés',rows.length],['À examiner',count]]){
+   const box=document.createElement('div');box.className='observation-cell';
+   const b=document.createElement('b');b.textContent=String(n);
+   const span=document.createElement('span');span.textContent=label;box.append(b,span);summary.append(box);
+  }
+  if(!rows.length){cases.textContent='Aucun dossier opérationnel source-vérifié. Un compte normal n’est pas un incident.';return;}
+  for(const item of rows){
+   const row=document.createElement('button');row.type='button';row.className='secondary';
+   row.style.textAlign='left';row.style.width='100%';row.style.whiteSpace='normal';
+   row.textContent=item.state+' · '+item.kind+' · ACC '+item.account_id+
+     ' · MKT '+item.market_id+' · rq '+item.request_id+
+     ' · v'+item.version;
+   row.onclick=()=>showOperatorCase(item.id);
+   cases.append(row);
+  }
+  if(selectedCase && rows.some(c=>c.id===selectedCase)){
+   await showOperatorCase(selectedCase);
+  }
+}
+async function showOperatorCase(id){
+ selectedCase=id;
+ const data=await api('/api/ops/cases/'+id);
+ el('caseDetail').hidden=false;
+ el('caseTitle').textContent='Dossier '+data.kind+' · état '+data.state+' · version '+data.version;
+ el('caseData').textContent=JSON.stringify({
+    case_id:data.id,account_id:data.account_id,market_id:data.market_id,
+    request_id:data.request_id,order_id:data.order_id,status:data.state,
+    venue_terminal_verdict:data.last_venue_verdict,
+    evidence:data.latest_evidence,first_seen:data.first_seen_at,last_seen:data.last_seen_at,
+    exchange_writes_enabled:false,incident_recovery_proven:false
+ },null,2);
+ const ledger=await api('/api/ops/cases/'+id+'/ledger');
+ el('caseAuditStatus').textContent=ledger.hash_chain_valid?
+    'Chaîne locale valide, PAS une attestation immutable externe':'ALERTE : chaîne locale altérée';
+ el('caseAudit').textContent=ledger.events.map(x=>x.created_at+' | '+x.kind+' | '+x.actor).join('\n');
+}
+
+function notice(msg){let box=el('error');box.style.display='block';box.textContent=msg}
+async function api(url,init){let res=await fetch(url,init);let data=await res.json();if(!res.ok)throw Error(data.detail||'Service unavailable');return data}
+async function refreshPage(){
+  try{
+    let health=await api('/api/health');el('live').textContent=health.read_credentials_present?'KEY SET':'OFF';
+    let items=(await api('/api/incidents')).items;el('total').textContent=items.length;
+    el('list').replaceChildren();
+    items.forEach(item=>{let entry=document.createElement('div');entry.className='item';let b=document.createElement('b');b.textContent=item.status;let sub=document.createElement('small');sub.textContent='Account '+item.account_id+' / rq '+item.rq+' / mkt '+item.market_id;entry.append(b,sub);entry.onclick=()=>show(item.id);el('list').append(entry)});
+    if(!items.length)el('list').textContent='Aucun incident.';
+    if(selected)await show(selected)
+  }catch(err){notice(err.message)}
+}
+async function show(id){
+  selected=id;let item=await api('/api/incidents/'+id);
+  el('empty').style.display='none';el('detail').style.display='block';el('selected_title').textContent='Incident / rq '+item.rq;
+  el('truth').textContent=item.last_source+' / '+(item.last_refresh_at?'LIVE READ RECORDED':'NO AUTHENTICATED READ');
+  el('state').textContent=item.status;el('reason').textContent=item.plan.action+' — '+item.plan.reason;
+  el('readinfo').textContent=item.last_refresh_at||'Aucun état authentifié';
+  el('frame').placeholder=JSON.stringify({mt:24,d:[{acc:item.account_id,rq:item.rq,mkt:item.market_id,oid:99,st:4}]},null,2);
+  let ledger=await api('/api/incidents/'+id+'/ledger');
+  el('audit').textContent=ledger.events.slice(-12).map(e=>e.created_at+' | '+e.kind+' | '+e.source).join('\n')+'\nLOCAL HASH CHAIN: '+(ledger.hash_chain_valid?'OK':'INVALID')
+}
+el('create').onsubmit=async event=>{event.preventDefault();try{let form=new FormData(event.target);let row=await api('/api/incidents',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({network:'testnet',account_id:Number(form.get('account_id')),rq:Number(form.get('rq')),market_id:Number(form.get('market_id'))})});selected=row.id;event.target.reset();await refreshPage()}catch(err){notice(err.message)}};
+function renderAccount(d,currentlyLive){
+ const output=el('accountSummary');output.replaceChildren();
+ const fields=[
+  ['Comptes',Array.isArray(d.accounts)?d.accounts.length:'?'],
+  ['Ordres ouverts',d.open_orders_count],
+  ['Positions ouvertes',d.open_positions_count],
+  ['Historique (page 1)',d.history?.order_history?.first_page_count??'?'],
+  ['Fills (page 1)',d.history?.fills?.first_page_count??'?']
+ ];
+ fields.forEach(([label,value])=>{
+  const cell=document.createElement('div');cell.className='observation-cell';
+  const num=document.createElement('b');num.textContent=String(value);
+  const small=document.createElement('span');small.textContent=label;
+  cell.append(num,small);output.append(cell);
+ });
+ const flags=el('accountFlags');flags.replaceChildren();
+ const addFlag=(label)=>{
+  const span=document.createElement('span');span.className='observation-flag';
+  span.textContent=label;flags.append(span);
+ };
+ addFlag('MONAD TESTNET / CHAIN 10143');
+ addFlag(currentlyLive?'LECTURE LIVE OBSERVÉE':'DERNIÈRE LECTURE LOCALE');
+ addFlag('AUCUNE ÉCRITURE AUTORISÉE');
+ addFlag('SNAPSHOTS NON ATOMIQUES');
+ (d.accounts||[]).forEach(account=>{
+  addFlag('Compte #'+account.account_id+
+    (account.frozen?' / GELÉ':' / NON GELÉ')+
+    (account.order_forwarding_enabled?' / FORWARDING ON':' / FORWARDING OFF'));
+ });
+ const blocks=d.snapshot_blocks||{};
+ const suffix='Blocs: wallet '+String(blocks.wallet??'?')+
+   ' · ordres '+String(blocks.orders??'?')+
+   ' · positions '+String(blocks.positions??'?');
+ const noticeEl=el('accountSignals');
+ const delta=d.activity;
+ let interpretation='Première observation ou comparaison indisponible. Aucun incident métier prouvé.';
+ if(delta){
+  if(delta.classification==='ACTIVITY_CHANGE_REVIEW_ONLY')
+   interpretation='Changement observé entre deux lectures : examen nécessaire; cela ne prouve ni erreur, ni fill, ni incident.';
+  else if(delta.classification==='ACCOUNT_SET_CHANGED_REBASE_REQUIRED')
+   interpretation='L’ensemble des comptes a changé : comparaison interrompue, rebaseliner avant toute conclusion.';
+  else if(delta.classification==='NO_CHANGE_OBSERVED')
+   interpretation='Aucun changement détecté dans ces agrégats. Cela ne garantit pas l’absence d’incident.';
+  else interpretation='Première observation authentifiée enregistrée : point de départ, aucune conclusion métier.';
+ }
+ noticeEl.textContent=interpretation+' '+suffix;
+ noticeEl.className=delta?.requires_investigation?'observation-warning':'';
+ const observed=d.observed_orders||{};
+ const renderList=(name,root)=>{
+  root.replaceChildren();
+  const collection=observed[name];
+  if(!collection || !collection.rows || !collection.rows.length){
+   const empty=document.createElement('div');empty.textContent='Aucun ordre observé dans '+(name==='open_orders'?'les ordres ouverts':'la première page historique')+'.';
+   empty.className='observed-note';root.append(empty);return;
+  }
+  collection.rows.forEach(order=>{
+   const item=document.createElement('div');item.className='observed-order';
+   const title=document.createElement('strong');
+   title.textContent=order.status;
+   const tuple=document.createElement('span');
+   tuple.textContent='ACC '+order.account_id+' · MKT '+order.market_id+' · rq '+order.request_id+' · OID '+order.order_id;
+   const provenance=document.createElement('span');provenance.className='origin';
+   provenance.textContent=order.source==='AUTHENTICATED_OPEN_ORDER_SNAPSHOT'?
+     'OUVERT AU BLOC '+String(order.snapshot_block??'?'):'ÉVÉNEMENT HISTORIQUE · PAGE 1';
+   const verdict=document.createElement('span');
+   verdict.textContent=order.fill_found_first_page?'FILL OBSERVÉ, POSITION NON VÉRIFIÉE':'EFFET / RÉSULTAT NON INFÉRÉ';
+   item.append(title,tuple,provenance,verdict);root.append(item);
+  });
+  if(collection.display_truncated){
+   const truncated=document.createElement('div');truncated.className='observed-note';
+   truncated.textContent='Affichage limité à '+collection.shown_count+' sur '+collection.available_count+' événements.';
+   root.append(truncated);
+  }
+ };
+ renderList('open_orders',el('accountOrders'));
+ renderList('history_page_1',el('accountHistory'));
+ const scan=d.history?.order_history||{};
+ el('accountPagination').textContent=
+   'Historique signé : '+String(scan.pages_scanned??1)+' page(s) parcourue(s), '+
+   String(scan.events_scanned??scan.first_page_count??0)+' événement(s) lus. '+
+   (scan.scan_complete?
+     'Fin de pagination annoncée pour ce relevé ; les lacunes temporelles restent possibles.':
+     'Pagination limitée ou incomplète : aucune absence d’événement ne peut être prouvée.');
+
+ const lifecycleEl=el('orderLifecycle');lifecycleEl.replaceChildren();
+ const changes=d.order_lifecycle?.transitions||[];
+ if(!changes.length){
+   const item=document.createElement('div');
+   item.className='observed-note';
+   item.textContent='Aucune évolution d’ordre prouvée entre ces deux observations.';
+   lifecycleEl.append(item);
+ }else{
+   changes.forEach(t=>{
+     const div=document.createElement('div');div.className='observed-order';
+     const title=document.createElement('strong');title.textContent=t.finding;
+     const id=document.createElement('span');id.textContent='ACC '+t.account_id+
+       ' · MKT '+t.market_id+' · rq '+t.request_id+' · OID '+t.order_id;
+     const caveat=document.createElement('span');caveat.className='origin';
+     caveat.textContent='HISTORIQUE '+(t.positive_matching_history?'CORRÉLÉ':'NON CONFIRMÉ')+
+       (t.request_id_changed_on_terminal_action?' · rq ACTION '+t.terminal_event_request_id:'')+
+       ' · POSITION NON VÉRIFIÉE · PAS UNE RÉCUPÉRATION';
+     div.append(title,id,caveat);lifecycleEl.append(div);
+   });
+ }
+
+ const reviewEl=el('negativeReview');reviewEl.replaceChildren();
+ const reviews=d.negative_path_review;
+ const cases=reviews?.cases||[];
+ if(!cases.length){
+  const note=document.createElement('p');note.className='observed-note';
+  note.textContent=reviews?.first_history_page_incomplete?
+   'Aucun échec dans la première page, mais l’historique est incomplet. Aucun verdict d’absence d’échec.' :
+   'Aucun échec de l’exchange ou état UNKNOWN positif observé dans cette lecture. Aucune nouvelle action autorisée.';
+  reviewEl.append(note);
+ } else {
+  cases.forEach(row=>{
+   const article=document.createElement('div');article.className='observed-order';
+   const title=document.createElement('strong');title.textContent=row.kind;
+   const id=document.createElement('span');
+   id.textContent='ACC '+row.account_id+' · MKT '+row.market_id+
+     ' · rq '+row.original_request_id+
+     (row.order_id===null || row.order_id===undefined?' · oid NON ATTRIBUÉ':' · oid '+row.order_id);
+   const cause=document.createElement('span');cause.className='origin';
+   cause.textContent=row.status_reason?
+     'SR '+row.status_reason_code+' / '+row.status_reason+' · FR '+String(row.failure_reason||'NON PUBLIÉ'):
+     row.interpretation;
+   const next=document.createElement('span');next.textContent=row.next_step;
+   article.append(title,id,cause,next);reviewEl.append(article);
+  });
+ }
+ el('accountDetails').textContent=JSON.stringify(d,null,2);
+}
+el('accountLive').onclick=async()=>{
+ try{
+  let d=await api('/api/account/live-refresh',{method:'POST'});
+  el('accountTruth').textContent='SIGNED PERPL GET / TESTNET / LIVE ACCOUNT SNAPSHOTS';
+  renderAccount(d,true);
+  await refreshCases();
+ }catch(err){notice('No authenticated live observation: '+err.message)}
+};
+async function loadLatestAccount(){
+ try{
+  let d=await api('/api/account/latest');
+  if(d.classification==='AUTHENTICATED_PERPL_TESTNET_ACCOUNT_OVERVIEW'){
+   el('accountTruth').textContent='LAST LOCAL AUTHENTICATED OBSERVATION / '+d.retrieved_at;
+   renderAccount(d,false);
+  }
+ }catch(err){notice(err.message)}
+}
+loadLatestAccount();
+loadOperatorSession().then(refreshCases).catch(err=>notice('Operator session: '+err.message));
+async function monitorUpdate(){
+ try{
+  const s=await api('/api/ops/monitor');
+  el('monitorStatus').textContent=s.enabled?
+    'LIVE READ POLLING · '+s.interval_seconds+' s · réussites '+s.runs+
+    ' · lectures échouées '+s.failed_reads:
+    'Surveillance arrêtée · réussites '+s.runs+' · lectures échouées '+s.failed_reads;
+ }catch(err){notice('Monitor non disponible : '+err.message)}
+}
+async function monitorChange(which){
+ try{
+  if(!sessionKey)await loadOperatorSession();
+  const path=which==='start'?'/api/ops/monitor/start':'/api/ops/monitor/stop';
+  const options={method:'POST',headers:{'X-Operator-Session':sessionKey}};
+  if(which==='start'){
+    options.headers['Content-Type']='application/json';
+    options.body=JSON.stringify({interval_seconds:45});
+  }
+  await api(path,options);
+  await monitorUpdate();
+ }catch(err){notice('Monitor : '+err.message)}
+}
+el('monitorStart').onclick=()=>monitorChange('start');
+el('monitorStop').onclick=()=>monitorChange('stop');
+monitorUpdate();
+setInterval(async()=>{
+ const s=await api('/api/ops/monitor').catch(()=>null);
+ if(s && s.enabled){
+   await monitorUpdate();
+   await refreshCases();
+   await loadLatestAccount();
+ }
+},30000);
+
+el('caseDecide').onclick=async()=>{
+ if(!selectedCase){notice('Sélectionnez un dossier.');return;}
+ try{
+  if(!sessionKey)await loadOperatorSession();
+  const cur=await api('/api/ops/cases/'+selectedCase);
+  const action=el('operatorAction').value;
+  const actor=el('operatorName').value.trim();
+  const reason=el('operatorReason').value.trim();
+  const request={
+   action,actor,reason,expected_version:cur.version,
+   idempotency_key:crypto.randomUUID()
+  };
+  await api('/api/ops/cases/'+selectedCase+'/decision',{
+   method:'POST',headers:{'Content-Type':'application/json','X-Operator-Session':sessionKey},
+   body:JSON.stringify(request)
+  });
+  notice('Décision LOCALE sauvegardée : '+action+' · AUCUN ordre envoyé à Perpl');
+  await refreshCases();
+ }catch(err){notice('Décision refusée : '+err.message)}
+};
+el('caseRecheck').onclick=async()=>{
+ if(!selectedCase)return;
+ try{
+  if(!sessionKey)await loadOperatorSession();
+  const d=await api('/api/ops/cases/'+selectedCase+'/recheck',{
+   method:'POST',headers:{'X-Operator-Session':sessionKey}
+  });
+  renderAccount(d.signed_observation,true);
+  await refreshCases();
+  notice('Relecture authentifiée effectuée. AUCUNE récupération ou écriture exchange supposée.');
+ }catch(err){notice('Relecture indisponible : '+err.message)}
+};
+
+el('publicMarket').onclick=async()=>{
+ try{
+  let d=await api('/api/incidents/'+selected+'/public-market-refresh',{method:'POST'});
+  el('marketTruth').textContent='LIVE PUBLIC / TESTNET / NON ATOMIC / NOT ORDER PROOF';
+  el('marketOutput').textContent=JSON.stringify({market:d.symbol,mark:d.mark_price,bid:d.top_bid,ask:d.top_ask,
+   ticker_block:d.ticker_block,book_block:d.book_block,matched_block:d.same_block_observed,observed_at:d.retrieved_at},null,2);
+  await show(selected)
+ }catch(err){notice('Public market unavailable; order state unchanged: '+err.message)}
+};
+el('refresh').onclick=async()=>{try{await api('/api/incidents/'+selected+'/live-refresh',{method:'POST'});notice('Signed read completed. Check evidence and state.');await refreshPage()}catch(err){notice('LIVE NOT CONFIRMED: '+err.message)}};
+el('verify').onclick=async()=>{let d=await api('/api/incidents/'+selected+'/ledger');notice(d.hash_chain_valid?'Local journal integrity verified — not on-chain proof':'LOCAL JOURNAL INTEGRITY FAILED');await show(selected)};
+el('ingest').onclick=async()=>{try{let f=JSON.parse(el('frame').value);await api('/api/incidents/'+selected+'/manual-frame',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({frame:f})});notice('Local fixture ingested as MANUAL_UNVERIFIED');await refreshPage()}catch(err){notice(err.message)}};
+refreshPage();
+</script>
+</body></html>

@@ -1,0 +1,220 @@
+version: 0.1.0
+date: 2026-10-12
+project: METROPOLIS_PERPL_INCIDENT_OPERATIONS
+repo: Faadil1/metropolis-perpl-incident-ops
+branch: research/live-depth-foundation
+authority: RESEARCH_ONLY
+concept_lock: BLOCKED
+build_state: LIVE_PERPL_TESTNET_AUTHENTICATED_READ_USER_OBSERVED_PLUS_LOCAL_VERIFIED
+live_core_loop: BLOCKED
+sponsor: MONAD_METROPOLIS_2026
+deadline_date: 2026-10-13
+deadline_clock: UNVERIFIED_ON_PUBLIC_SITE
+historic_repo: Faadil1/valid-until-agent-os
+historic_repo_mutation: FORBIDDEN
+positive_signal: official Perpl client APIs have documented idempotency and reconciliation requirements
+negative_event:
+  source: https://github.com/frankolien/desk/blob/main/docs/perpl-order-400-audit-2026-09-15.md
+  verdict: SOURCE_VERIFIABLE_HISTORICAL_INCIDENT
+  limitation: competitor Desk has already corrected its false-expiry bug
+differentiation: BLOCKED
+user_demand: UNKNOWN
+public_perpl_testnet_probe: PROVEN_ON_GITHUB_ACTIONS_38066778460
+public_perpl_mainnet_probe: PROVEN_ON_GITHUB_ACTIONS_38066778460
+operator_public_testnet_market_read: IMPLEMENTED_NOT_EXTERNALLY_EXERCISED
+perpl_order_fill_history: IMPLEMENTED_NOT_LIVE_VERIFIED
+perpl_testnet_ui_account_created: USER_REPORTED_API_KEY_CREATED
+perpl_read_key_scope: READ_REPORTED_NOT_CRYPTOGRAPHICALLY_SCOPE_PROVEN
+perpl_read_authentication: PROVEN_BY_USER_REDACTED_LOCAL_OUTPUT_5_OF_5_HTTP200
+perpl_readiness_script: EXECUTED_ON_USER_WINDOWS_DEVICE_34_TESTS_PASS
+live_perpl_read: PROVEN_USER_LOCAL_SIGNED_GET_ACCOUNT_AND_HISTORY
+live_perpl_write: NOT_IMPLEMENTED
+production_funds: FORBIDDEN
+current_account_activity:
+  open_orders: 0
+  open_positions: 0
+  order_history_first_page: 0
+  fills_first_page: 0
+  source: USER_REPORTED_SANITIZED_VERIFICATION_OUTPUT
+account_live_operator_surface: PROVEN_BY_USER_SCREENSHOT_FROM_LOCALHOST
+account_live_screen_capture:
+  provenance: USER_PROVIDED_SCREENSHOT_NO_RAW_API_TRACE
+  date: 2026-10-10
+  source_label: SIGNED_PERPL_GET_TESTNET_LIVE_ACCOUNT_SNAPSHOTS
+  wallet_snapshot_block: 69883405
+  orders_snapshot_block: 69883406
+  positions_snapshot_block: 69883407
+  non_atomic_http_reads: true
+  exchange_writes_enabled: false
+  incident_recovery_proven: false
+  live_core_loop_proven: false
+  history_first_page_count: 0
+  fills_first_page_count: 0
+  screenshot_publication: NOT_AUTHORIZED
+owner_operator_second_verified_screenshot:
+  provenance: USER_PROVIDED_SCREENSHOT_NOT_RAW_EXCHANGE_TRACE
+  date: 2026-10-10
+  account_id_visible: 1060
+  account_frozen: false
+  order_forwarding_enabled: false
+  open_orders: 0
+  open_positions: 0
+  history_first_page: 0
+  fills_first_page: 0
+  observed_comparison: NO_CHANGE_OBSERVED_IN_AGGREGATES
+  wallet_snapshot_block: 69893555
+  orders_snapshot_block: 69893556
+  positions_snapshot_block: 69893557
+  no_real_order_or_incident_proven: true
+  screenshot_publication: NOT_AUTHORIZED
+live_read_comparison_in_operator_ui: PROVEN_BY_OWNER_SCREENSHOT_NO_CHANGE
+real_order_observer: PROVEN_BY_OWNER_LOCAL_UI_SCREENSHOT_WITH_MATCHING_RQ_OID
+first_real_testnet_order:
+  provenance: OWNER_SCREENSHOTS_PERPL_UI_AND_LOCAL_SIGNED_GET_AGGREGATES
+  date: 2026-10-10
+  account_id: 1060
+  perpl_ui_order: LIMIT_LONG_BTC_POST_ONLY_1X
+  size_btc: "0.0002"
+  limit_price_usd: "82000"
+  nominal_value_test_usd: "16.40"
+  perpl_ui_status: OPEN
+  perpl_ui_remaining_size_btc: "0.0002"
+  signed_operator_account_read:
+    open_orders: 1
+    order_history_first_page: 1
+    fills_first_page: 0
+    open_positions: 0
+    wallet_block: 69900670
+    orders_block: 69900671
+    positions_block: 69900672
+    delta_classification: ACTIVITY_CHANGE_REVIEW_ONLY
+  request_id_rq: OBSERVED_IN_OWNER_LOCAL_UI_SCREENSHOT_NOT_PUBLISHED_IN_REPO
+  order_id_oid: OBSERVED_IN_OWNER_LOCAL_UI_SCREENSHOT_NOT_PUBLISHED_IN_REPO
+  order_identity_sha256: b90a6004e8389540821a673d89292d60449da3cdff808c70173712869da7a0aa
+  incident_or_fill_proven: false
+  screenshots_publication: NOT_AUTHORIZED
+  owner_local_ui_version: REAL_ORDER_ROWS_OBSERVED
+real_order_aggregate_observation: PROVEN_BY_OWNER_LOCAL_SIGNED_UI_SCREENSHOT
+real_order_identity_correlation:
+  status: PROVEN_OWNER_SCREENSHOT
+  chain_id: 10143
+  account_id: 1060
+  market_id: 16
+  order_identity_sha256: b90a6004e8389540821a673d89292d60449da3cdff808c70173712869da7a0aa
+  exact_rq_oid: ON_OWNER_LOCAL_SCREENSHOT_ONLY
+  open_orders_snapshot_block: 69901507
+  wallet_snapshot_block: 69901506
+  positions_snapshot_block: 69901507
+  historic_event_same_identity: true
+  historic_event_status: OPEN
+  filled_history_first_page_count: 0
+  recovery_proven: false
+  exchange_writes_enabled: false
+normal_order_cancellation_transition: PROVEN_FROM_OWNER_VIDEO_SIGNED_HISTORY_POSITIVE_STATUS
+owner_cancel_video:
+  local_date: 2026-10-11
+  utc_capture_date: 2026-10-12
+  provenance: OWNER_UPLOADED_VIDEO_LOCAL_OPERATOR_NOT_PUBLISHED
+  account_id: 1060
+  market_id: 16
+  open_orders: 0
+  positions: 0
+  historical_first_page_events: 2
+  fills_first_page: 0
+  original_order_request_id: COMMITMENT_ONLY
+  cancel_action_request_id: DISTINCT_FROM_ORIGINAL_COMMITMENT_ONLY
+  order_id: SAME_AS_ORIGINAL_OPEN
+  original_identity_sha256: b90a6004e8389540821a673d89292d60449da3cdff808c70173712869da7a0aa
+  cancel_identity_sha256: e5eee005655ba395e4ee1fedd735a38594ec96dd50b58281eca32c00674b7e82
+  signed_history_terminal_status: CANCELED
+  prior_ui_lifecycle_verdict: NO_ORDER_TRANSITIONS_PROVEN_BUG
+  detected_root_cause: CANCELLATION_RQ_DIFFERS_FROM_ORIGINAL_AND_LATEST_ONLY_LOSES_OPEN
+  full_incident_recovery_proven: false
+  user_video_publication: NOT_AUTHORIZED
+normal_cancel_reconciliation_fix: PROVEN_OWNER_RETEST_REAL_LOCAL_SIGNED_READ
+normal_cancel_reconciliation_owner_retest:
+  owner_local_date: 2026-10-11
+  utc_filename_timestamp: 2026-10-12T02:55:58
+  provenance: OWNER_UPLOADED_LOCALHOST_SCREEN_RECORDING_NOT_PUBLISHED
+  recording_sha256: de35d38f2544bf41bd5ddd690351bd183eb47530b51ba9ac4cb8985f1c35ca78
+  observed_classification: CANCELED_STATUS_OBSERVED
+  venue_history_correlated: true
+  original_request_and_terminal_action_rq_distinct: true
+  order_id_identical: true
+  account_id: 1060
+  market_id: 16
+  open_orders: 0
+  open_positions: 0
+  first_page_history_count: 2
+  first_page_fills: 0
+  sample_wallet_block: 70283822
+  sample_orders_block: 70283823
+  sample_positions_block: 70283824
+  no_exchange_writes_from_application: true
+  normal_cancel_not_incident_recovery: true
+  complete_fills_and_position_consequence_not_proven: true
+negative_path_readonly_review:
+  source: PERPL_SIGNED_FIRST_PAGE_HISTORY_PLUS_LIFECYCLE_DELTA
+  code_status: LOCAL_VERIFIED_85_TESTS_PASS_CI_38198839222
+  failure_without_oid: COVERED_BY_LOCAL_TESTS_ONLY
+  external_live_failed_order: NOT_OBSERVED
+  unknown_disappearance: LOCAL_TESTS_ONLY
+  clean_account_false_escalation: PREVENTED_BY_LOCAL_TESTS
+external_operator_demand: NOT_VERIFIED
+competitive_novelty: BLOCKED_DESK_PERPLBOT_NATIVE_PERPL_ALREADY_COVER_ORDER_TRACKING
+research_review: research/NEGATIVE_EVENT_NOVELTY_REVIEW_2026-10-11.md
+product_depth_execution:
+  canonical_policy: Faadil1/faadil-agent-system/PRODUCT-REALITY-POLICY.yaml
+  local_acceptance: product/PRODUCT_DEPTH_ACCEPTANCE.json
+  first_bounded_live_observation_slice: PROVEN
+  first_incident_core_slice: NOT_PROVEN
+  full_product_status: NOT_COMPLETE
+  concept_lock: BLOCKED
+  current_primary_workstream: PRODUCT_EXPLOITATION
+  evidence_workstream: SECONDARY_OUTPUT_OF_REAL_PRODUCT_RUNTIME
+  post_vertical_slice_depth_gap_review: ACTIVE
+  product_exploitation_loop: ACTIVE
+  justified_material_depth_gaps_remaining: true
+  proof_count_never_completes_product: true
+  exact_next_high_value_delta: GENUINE_LIVE_NEGATIVE_EVENT_TO_APPROVED_REAL_CORRECTION_TO_VERIFIED_EXCHANGE_POSITION_CONSEQUENCE
+  valid_stop_condition: NONE
+  halt_due_to_deadline_must_not_be_reclassified_as_complete: true
+next_action: PRODUCT_EXPLOITATION remains primary; complete material live incident/operator action/real consequence path or report NOT_COMPLETE. Evidence, judge flow and packaging only secondary until gaps addressed; verify external operator pain and Concept Lock separately.
+
+operator_case_product:
+  code_status: LOCAL_VERIFIED_WITH_CI_NOT_EXTERNAL_LIVE_FAILURE
+  functionality: SIGNED_HISTORY_EVENT_TO_CASE_TO_HUMAN_DECISION_TO_SIGNED_RECHECK_TO_TERMINAL_REVIEW
+  shared_runtime: FASTAPI_SQLITE_ACCOUNT_OBSERVATION_AND_OPERATOR_CASES
+  case_identity: ACCOUNT_MARKET_REQUEST_ORDER_KIND
+  local_mutations: ACKNOWLEDGE_HOLD_ESCALATE_REQUEST_RECHECK_CLOSE_REVIEW
+  optimistic_version_and_idempotency: IMPLEMENTED_LOCAL_TESTED
+  causal_event_hash_chain: IMPLEMENTED_LOCAL_NOT_IMMUTABLE
+  origin_checks: LOCAL_OWNER_ONLY_NOT_MULTI_USER_RBAC
+  opt_in_monitor: IMPLEMENTED_LOCAL_TESTED_45_SECONDS
+  later_terminal_case_reconciliation: IMPLEMENTED_LOCAL_TESTED
+  failure_without_oid: IMPLEMENTED_LOCAL_TESTED
+  real_failed_order_in_owner_account: NOT_OBSERVED
+  independent_operator_trial: NOT_OBSERVED
+  exchange_writes: NOT_IMPLEMENTED
+  real_incident_recovery: NOT_PROVEN
+  docs: docs/OPERATOR_RUNBOOK_2026-10-12.md
+  true_completion_verdict: NOT_COMPLETE
+
+owner_video_2026_10_12:
+  receipt: evidence/sanitized/PERPL_OWNER_LOCAL_OPERATOR_SCREEN_2026-10-12.md
+  classification: OWNER_LOCAL_SIGNED_ACCOUNT_UI_OBSERVED
+  normal_cancel_correlation: PROVEN
+  operational_cases_on_normal_account: ZERO_CORRECT
+  monitor_active_in_recording: false
+  genuine_failed_perpl_order: NOT_OBSERVED
+  full_history_observed: false
+signed_history_pagination:
+  default_bounded_pages: 5
+  maximum_pages: 10
+  method: SIGNED_ALLOWLISTED_GET_TESTNET
+  implemented: true
+  test_proof: LOCAL_CI_MOCK_TRANSPORT_ONLY
+  owner_live_cursor_proof: PENDING
+  over_limit_or_bad_cursor: UNKNOWN_FAIL_CLOSED
+  incident_source_scan: ENABLED_ON_SIGNED_PAGES
+  full_exhaustive_history_claim: NOT_PROVEN
