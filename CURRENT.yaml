@@ -155,7 +155,7 @@ normal_cancel_reconciliation_owner_retest:
   complete_fills_and_position_consequence_not_proven: true
 negative_path_readonly_review:
   source: PERPL_SIGNED_FIRST_PAGE_HISTORY_PLUS_LIFECYCLE_DELTA
-  code_status: IMPLEMENTED_NOT_YET_CI_VERIFIED
+  code_status: LOCAL_VERIFIED_85_TESTS_PASS_CI_38198839222
   failure_without_oid: COVERED_BY_LOCAL_TESTS_ONLY
   external_live_failed_order: NOT_OBSERVED
   unknown_disappearance: LOCAL_TESTS_ONLY
@@ -163,4 +163,4 @@ negative_path_readonly_review:
 external_operator_demand: NOT_VERIFIED
 competitive_novelty: BLOCKED_DESK_PERPLBOT_NATIVE_PERPL_ALREADY_COVER_ORDER_TRACKING
 research_review: research/NEGATIVE_EVENT_NOVELTY_REVIEW_2026-10-11.md
-next_action: validate signed negative-review against local tests, then observe genuinely negative Perpl event or obtain third-party operator account incident; no artificial trading order and no premature Concept Lock
+next_action: owner run latest read-only operator to check no false incident on normal account, then obtain real operator pain and a genuine Perpl negative event; do not manufacture orders or claim Concept Lock

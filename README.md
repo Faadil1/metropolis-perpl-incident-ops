@@ -15,8 +15,8 @@ An API order can be accepted or filled even when a trading client's response is 
 - Authenticated Perpl testnet account connection: **PROVEN by sanitized owner terminal output (five HTTP 200 reads)**
 - Authenticated account overview in local operator UI: **PROVEN by owner screenshots**; snapshot blocks 69,883,405–69,883,407 and subsequent 69,893,555–69,893,557; HTTP reads non-atomic
 - Authenticated account comparison **PROVEN with no aggregate change**; one account (#1060), 0 orders/positions; no incident inferred
-- Read-only genuine order observer: **IMPLEMENTED, NOT YET LIVE-EXERCISED**; observed order IDs originate only from signed Perpl order snapshots/history, no synthetic trading
-- Live incidents, authenticated cancellation, actual downstream trade consequences: **NOT IMPLEMENTED / NOT PROVEN**
+- Read-only genuine order observer: **PROVEN by owner Testnet screenshot with matching rq/oid**; observed order IDs originate only from signed Perpl order snapshots/history, no synthetic trading
+- Normal owner-triggered Testnet cancellation: **PROVEN in signed account history and local operator UI**; incident remediation, application-initiated cancellation and fully verified trade consequences: **NOT IMPLEMENTED / NOT PROVEN**
 - Historical real negative event: **PROVEN as a documented source**, independent external demand unknown
 - No production-readiness or security assurance claim
 
@@ -87,7 +87,7 @@ incident recovery, load-bearing exchange write capability or unmet demand.**
 New read-only `negative_review.py` can flag **actual venue-recorded failed order
 events** (`st=7`, reason codes), including requests with no allocated `oid`,
 and separately identify unresolved UNKNOWN transitions without authorizing
-resubmission. This is **implemented and tested with local fixtures**, but a real
+resubmission. This is **implemented and locally test-verified (85 GitHub Actions tests)**, but a real
 failed Perpl order has **not** been observed. The local owner account currently
 has only a normal canceled order; turning forwarding OFF alone is not a failure.
 
