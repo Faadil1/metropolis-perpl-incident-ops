@@ -12,6 +12,15 @@
 
 **Bug source:** code required identical creation and cancellation `rq` to join, while Perpl's cancellation uses a fresh `rq` and references the order by `oid`. Repeated refreshes already overwrote the prior signed OPEN as the immediately previous observation, so even a correct join across latest-only snapshots would miss it.
 
-**Resolution implemented, awaiting live owner retest:** order key = (account,market,oid), preserve the original and cancellation `rq`, require a positive matching terminal historical status, scan up to 512 SHA-validated historical sanitized account observations. No manufactured events or exchange writes. Cross-account and conflicting statuses remain fail-closed. Regression tests mimic the observed semantics.
+**Resolution implemented; subsequently validated by a separate owner video:** order key = (account,market,oid), preserve the original and cancellation `rq`, require a positive matching terminal historical status, scan up to 512 SHA-validated historical sanitized account observations. No manufactured events or exchange writes. Cross-account and conflicting statuses remain fail-closed. Regression tests mimic the observed semantics.
 
 **Status:** owner video proves normal exchange cancellation, *not* a resolved business incident, all-fill absence, proven production monitoring, live fixed UI, market demand, or concept lock.
+
+## Subsequent owner LIVE confirmation
+
+The owner subsequently recorded the patched localhost operator displaying
+`CANCELED_STATUS_OBSERVED` with correlated original order and distinct cancel
+action request ID, **0 open orders**, **0 positions**, **2 historical events** and
+**0 first-page fills**. This closes the bug's owner-retest step. See
+[the sanitized retest receipt](./PERPL_REAL_CANCEL_FIX_OWNER_RETEST_2026-10-11.md).
+The normal exchange cancel is still not evidence of a recovered incident.

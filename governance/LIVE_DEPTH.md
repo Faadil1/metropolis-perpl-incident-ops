@@ -70,6 +70,22 @@ Owner provided a screenshot of the latest local Metropolis UI. **A genuine Perpl
 
 The next read-only product increment compares subsequent signed order snapshots to the last observation. **If** the same `rq+oid` disappears and matching Perpl history carries `CANCELED`, the classification is `CANCELED_STATUS_OBSERVED` **not** recovered incident; absence of a matching terminal history event means `DISAPPEARED_OUTCOME_UNKNOWN`. The code never issues an order or a cancel, does not infer flat positions or no partial fills, and rejects cross-account comparisons or truncated live-open rows. Actual owner cancellation and outcome are not yet observed.
 
+## Owner LIVE regression retest — cancellation join fix PROVEN (2026-10-11 EDT / 2026-10-12 UTC)
+
+Owner supplied a **new 37.2-second MP4**, captured after updating the local operator application to the repaired code. The recording is retained only in this conversation, **not uploaded to public GitHub**. Video SHA-256 commitment: `de35d38f2544bf41bd5ddd690351bd183eb47530b51ba9ac4cb8985f1c35ca78`.
+
+Visible in the actual local Metropolis UI after Perpl signed GET:
+- **CANCELED_STATUS_OBSERVED** in **Évolution vérifiée des ordres**.
+- Matching original order identity for **account 1060 / BTC market 16**.
+- Explicit **HISTORIQUE CORRÉLÉ** with **separate cancellation action rq**, whereas the `oid` is shared with the original OPEN order. Exact IDs are in the private recording; do not reproduce them publicly.
+- **0 open orders**, **0 positions**, **2 first-page history events**, **0 first-page fills**.
+- Newer sample signed wallet/open-order/position blocks **70283822 / 70283823 / 70283824**, explicitly **non-atomic**.
+- Explicit UI flags **POSITION NON VÉRIFIÉE** and **PAS UNE RÉCUPÉRATION**; **zero exchange writes from the application**.
+
+**Verdict:** Bug fix (new terminal action rq, same oid, history retained across reads) is **PROVEN on the owner's actual authenticated local Testnet path**. This was a normal user-issued cancellation through Perpl, *not* an incident handled by Metropolis. The app does not prove all historic fills, the position consequence at a perfectly simultaneous block, competitor differentiation or a production service.
+
+**Next milestone:** identify a genuine negative event / ambiguity, then verify a real safe operator response and measurable product differentiation before Concept Lock. Do not create new live orders solely for a showcase or silently enable a TRADE key.
+
 ## Live cancellation evidence and discovered bug — owner video, 2026-10-11 local / 2026-10-12 UTC
 
 **New genuine external evidence:** Owner-provided 22.4-second MP4 recording of the local operator UI after canceling the real Testnet order. The video is not published or saved in public GitHub.
@@ -80,7 +96,7 @@ Signed Perpl account summary in the operator UI: **account #1060**, **0 open ord
 
 **Repair:** The read-only lifecycle comparator now identifies the *order* with (account,market,oid), records both the original request ID and the terminal action request ID, checks positive terminal history, fails closed for missing/conflicting history and never treats a normal cancel as incident recovery. It searches earlier SHA-verified locally persisted signed account snapshots (up to 512) to recover the earlier OPEN after intermediate 0-open refreshes or a process restart. This is a bounded experimental capability, not production wallet isolation, complete history pagination or reliable long-term replay. Tests include the real observed distinct-`rq` case.
 
-**Truth boundary:** **Perpl historical cancellation = OWNER-VIDEO OBSERVED**, **Metropolis status correction = NOT YET LIVE RE-RUN BY OWNER**. Zero first-page fills and zero open positions do not prove that no prior partial execution ever happened. No real incident recovery, external adoption, defensible novelty or Concept Lock claim.
+**Truth boundary:** **Perpl historical cancellation = OWNER-VIDEO OBSERVED**, **Metropolis status correction = PROVEN BY SUBSEQUENT OWNER VIDEO**. Zero first-page fills and zero open positions do not prove that no prior partial execution ever happened. No real incident recovery, external adoption, defensible novelty or Concept Lock claim.
 
 ## Evidence boundaries
 
@@ -96,7 +112,7 @@ Signed Perpl account summary in the operator UI: **account #1060**, **0 open ord
 | Signed operator aggregate counts react to first real testnet order | **PROVEN by owner screenshots — 0→1 open orders** |
 | Real order `rq/oid` details observed inside product | **PROVEN by owner screenshot, matching signed order and history rows** |
 | Perpl signed historical `CANCELED` for prior real order | **PROVEN by owner-provided video**, different action `rq`, same `oid` |
-| Fixed comparator showing `CANCELED_STATUS_OBSERVED` on owner device | **BLOCKED: not re-exercised after patch** |
+| Fixed comparator showing `CANCELED_STATUS_OBSERVED` on owner device | **PROVEN in second uploaded screen recording** |
 | Received order-status event from live Perpl WS | BLOCKED |
 | Approved and executed a testnet cancel | NOT_IMPLEMENTED |
 | Final position/order consequence reconciled | NOT_IMPLEMENTED |

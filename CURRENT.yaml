@@ -131,5 +131,26 @@ owner_cancel_video:
   detected_root_cause: CANCELLATION_RQ_DIFFERS_FROM_ORIGINAL_AND_LATEST_ONLY_LOSES_OPEN
   full_incident_recovery_proven: false
   user_video_publication: NOT_AUTHORIZED
-normal_cancel_reconciliation_fix: IMPLEMENTED_PENDING_CI_AND_RETEST
-next_action: CI validate separate cancel-rq/order-oid mapping; owner update/restart app and verify CANCELED_STATUS_OBSERVED from retained signed local history
+normal_cancel_reconciliation_fix: PROVEN_OWNER_RETEST_REAL_LOCAL_SIGNED_READ
+normal_cancel_reconciliation_owner_retest:
+  owner_local_date: 2026-10-11
+  utc_filename_timestamp: 2026-10-12T02:55:58
+  provenance: OWNER_UPLOADED_LOCALHOST_SCREEN_RECORDING_NOT_PUBLISHED
+  recording_sha256: de35d38f2544bf41bd5ddd690351bd183eb47530b51ba9ac4cb8985f1c35ca78
+  observed_classification: CANCELED_STATUS_OBSERVED
+  venue_history_correlated: true
+  original_request_and_terminal_action_rq_distinct: true
+  order_id_identical: true
+  account_id: 1060
+  market_id: 16
+  open_orders: 0
+  open_positions: 0
+  first_page_history_count: 2
+  first_page_fills: 0
+  sample_wallet_block: 70283822
+  sample_orders_block: 70283823
+  sample_positions_block: 70283824
+  no_exchange_writes_from_application: true
+  normal_cancel_not_incident_recovery: true
+  complete_fills_and_position_consequence_not_proven: true
+next_action: proceed to real negative-event research, read-only live failure/uncertainty evaluation and competitive differentiation before Concept Lock; do not relabel routine cancellation as incident recovery

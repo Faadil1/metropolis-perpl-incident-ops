@@ -54,9 +54,7 @@ The actual order identifiers are intentionally not published here.
 
 The account read and order correlation are real, but the order is a *normal*
 exchange event, not an incident. A read-only lifecycle comparison can classify
-a future matching `CANCELED` history event, but **actual owner-side cancellation
-has not yet been observed** and neither canceled status nor a missing order
-automatically proves absence of fills or positions.
+a future matching `CANCELED` history event, and a subsequent owner video **proves that the normal testnet order was canceled**. Neither canceled status nor a missing order automatically proves absence of all fills or a position consequence.
 
 ## Normal Perpl Testnet cancellation — live behavioral finding
 
@@ -66,8 +64,20 @@ It has **the same order ID (`oid`) but a different cancel-action request ID
 (`rq`)**. This exposed a real bug in our old status join. The read-only
 comparator now matches the order by account/market/oid and preserves both
 request IDs. It uses bounded, digest-verified persisted observations to bridge
-repeated refreshes and restarts. Retest in the owner local runtime is pending.
+repeated refreshes and restarts. **The fixed local UI was retested by the owner:** it now shows `CANCELED_STATUS_OBSERVED` and a distinct cancel-action rq for the matched order ID.
 
 This is a **normal owner-originated cancel on Perpl**, not an incident recovery.
 No exchange writes have been implemented in Metropolis, and there is no
 evidence of actual order fills in the first history page or an open position.
+
+## LIVE cancellation fix verified on owner device
+
+A new owner-uploaded recording on October 11 (local) / October 12 (UTC)
+shows the fixed operator UI with **CANCELED_STATUS_OBSERVED**, correlated
+historical cancel action, **0 open orders**, **0 positions**, **2 first-page
+order-history events**, **0 first-page fills**. The genuine Perpl Testnet
+cancel was performed in the official exchange UI. The video is **not publicly
+released**; its hash and sanitized findings are in
+[evidence/sanitized/PERPL_REAL_CANCEL_FIX_OWNER_RETEST_2026-10-11.md](./evidence/sanitized/PERPL_REAL_CANCEL_FIX_OWNER_RETEST_2026-10-11.md).
+This proves the fixed normal-order lifecycle read. **It does not prove
+incident recovery, load-bearing exchange write capability or unmet demand.**
