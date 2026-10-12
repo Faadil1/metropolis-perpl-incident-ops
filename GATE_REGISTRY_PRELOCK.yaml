@@ -1,5 +1,5 @@
 version: 0.1.1
-date: 2026-10-10
+date: 2026-10-11
 project: MONAD_METROPOLIS_PERPL_INCIDENT_OPERATIONS
 canonical_reference: Faadil1/faadil-agent-system/projects/ryo-chan-2026/CONDITIONAL-GATEWAY-REGISTRY.yaml
 allowed_statuses: [ACTIVE, N/A, BLOCKED, PROVEN]
@@ -17,6 +17,8 @@ real_order_aggregate_change: PROVEN_OWNER_SCREENSHOT_0_TO_1
 live_order_action_status: EXTERNAL_OWNER_VENUE_CANCEL_VERIFIED_APP_EXCHANGE_WRITES_BLOCKED
 owner_cancel_video_evidence: PROVEN_CANCELED_HISTORY_DIFFERENT_RQ_SAME_OID
 metropolis_cancel_join_bug: FIX_PROVEN_BY_OWNER_LOCALHOST_VIDEO_2026_10_11
+novelty_research: research/NEGATIVE_EVENT_NOVELTY_REVIEW_2026-10-11.md
+scope_of_new_negative_review: LOCAL_TESTS_ONLY__NO_AUTHENTIC_FAILED_ORDER_YET
 cancellation_lifecycle_reconciliation: PROVEN_LOCAL_LIVE_USER_SCREEN_RECORDING
 gateways:
   CORE_LIFECYCLE: {status: ACTIVE}
@@ -48,6 +50,9 @@ gateways:
   TECHNICAL_REALITY_CHECK: {status: ACTIVE}
   TRUTH_BOUNDARY: {status: ACTIVE}
   NEGATIVE_PATH: {status: ACTIVE}
+  SIGNED_NEGATIVE_PATH_REVIEW: {status: ACTIVE}
+  LIVE_FAILED_ORDER_EVENT: {status: BLOCKED}
+  CROSS_CLIENT_INDEPENDENT_OPERATOR_DEMAND: {status: BLOCKED}
   EVIDENCE_INTEGRITY: {status: ACTIVE}
   AUTHENTICATED_TESTNET_READ: {status: PROVEN}
   AUTHENTICATED_OPERATOR_READ: {status: PROVEN}

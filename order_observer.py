@@ -18,23 +18,36 @@ class OrderObservationInvalid(ValueError):
 def _event(item, source, block, fills):
     if not isinstance(item,dict):
         raise OrderObservationInvalid("order must be an object")
-    for name in ("rq","acc","mkt","oid","st"):
+    for name in ("rq","acc","mkt","st"):
         if type(item.get(name)) is not int or item[name]<0:
             raise OrderObservationInvalid(f"order missing nonnegative {name}")
     if item["st"] not in STATUSES:
         raise OrderObservationInvalid("unsupported order status")
+    # Perpl may reject forwarding before assigning an on-chain order id.
+    # Only FAILED history records can be accepted without a valid oid.
+    oid=item.get("oid")
+    if type(oid) is not int or oid<=0:
+        if item["st"]==7 and source=="AUTHENTICATED_HISTORY_FIRST_PAGE" and oid in (0,None):
+            oid=None
+        else:
+            raise OrderObservationInvalid("non-failed order requires positive oid")
+    for name in ("sr","fr"):
+        if name in item and (type(item[name]) is not int or item[name]<0):
+            raise OrderObservationInvalid(f"malformed exchange {name}")
     # This is positive evidence of a fill on the first page, not proof of
     # a position (open/close/partial fills have different effects).
     found_fill=any(
         isinstance(f,dict)
         and f.get("acc")==item["acc"]
         and f.get("mkt")==item["mkt"]
-        and f.get("oid")==item["oid"]
+        and oid is not None and f.get("oid")==oid
         for f in fills
     )
     return {
         "account_id":item["acc"],"market_id":item["mkt"],
-        "request_id":item["rq"],"order_id":item["oid"],
+        "request_id":item["rq"],"order_id":oid,
+        "status_reason_code":item.get("sr"),
+        "failure_reason_code":item.get("fr"),
         "status_code":item["st"],"status":STATUSES[item["st"]],
         "source":source,"snapshot_block":block,
         "fill_found_first_page":found_fill,

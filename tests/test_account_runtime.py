@@ -217,3 +217,46 @@ def test_no_prior_signed_open_does_not_create_false_transition(monkeypatch,tmp_p
     assert response.status_code==200
     assert response.json()['order_lifecycle']['transitions']==[]
     assert response.json()['order_lifecycle']['incident_recovery_proven'] is False
+
+def test_signed_api_failure_missing_oid_reaches_operator_review(monkeypatch,tmp_path):
+    import importlib
+    app_module=importlib.import_module('app')
+    app_module.store=IncidentStore(str(tmp_path/'perpl-failed-order.sqlite3'))
+    raw=signed_example()
+    raw['order_history']['d']=[{'acc':800,'mkt':16,'rq':454,'st':7,'sr':34}]
+    class MockSignedPerpl:
+        @classmethod
+        def from_env(cls,network):
+            assert network=='testnet'
+            return cls()
+        def read_all(self):
+            return raw
+    monkeypatch.setattr(app_module,'PerplReadClient',MockSignedPerpl)
+    client=TestClient(app_module.app)
+    response=client.post('/api/account/live-refresh')
+    assert response.status_code==200, response.text
+    cases=response.json()['negative_path_review']['cases']
+    assert len(cases)==1
+    assert cases[0]['kind']=='POSITIVE_EXCHANGE_FAILURE_EVENT'
+    assert cases[0]['status_reason']=='OrderForwardingNotAllowed'
+    assert cases[0]['order_id'] is None
+    assert cases[0]['incident_recovery_proven'] is False
+    assert cases[0]['retries_authorized'] is False
+    assert client.get('/api/incidents').json()['items']==[]
+
+def test_no_failure_claim_when_only_forwarding_disabled(monkeypatch,tmp_path):
+    import importlib
+    app_module=importlib.import_module('app')
+    app_module.store=IncidentStore(str(tmp_path/'perpl-normal.sqlite3'))
+    raw=signed_example()
+    class MockSignedPerpl:
+        @classmethod
+        def from_env(cls,network):
+            return cls()
+        def read_all(self):
+            return raw
+    monkeypatch.setattr(app_module,'PerplReadClient',MockSignedPerpl)
+    r=TestClient(app_module.app).post('/api/account/live-refresh')
+    assert r.status_code==200
+    assert r.json()['negative_path_review']['review_required'] is False
+    assert r.json()['negative_path_review']['actual_live_failure_observed'] is False

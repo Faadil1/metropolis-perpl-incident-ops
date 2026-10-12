@@ -12,6 +12,7 @@ from account_overview import from_signed_snapshots, AccountOverviewInvalid
 from observation_delta import compare_live_observations
 from order_observer import summarize_observed_orders
 from order_lifecycle import compare_order_lifecycle
+from negative_review import review_signed_negative_paths
 
 app=FastAPI(title='Perpl Incident Operations',version='0.1.0',docs_url='/api/docs',redoc_url=None)
 store=IncidentStore(os.environ.get('INCIDENT_DB_PATH',str(Path(__file__).resolve().parent/'runtime'/'incidents.sqlite3')))
@@ -90,6 +91,7 @@ def refresh_account_overview():
         # already saw 0 active orders. READ-only and bounded to 512 local records.
         recent=store.recent_account_observations(limit=512)
         summary['order_lifecycle']=compare_order_lifecycle(previous,summary,earlier=recent)
+        summary['negative_path_review']=review_signed_negative_paths(summary)
         store.record_account_observation(summary)
         return summary
     except CredentialsUnavailable as exc:

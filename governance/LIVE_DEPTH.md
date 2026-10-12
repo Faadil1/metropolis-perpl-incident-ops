@@ -2,6 +2,14 @@
 
 **Status as of 2026-10-10: owner-observed LIVE authenticated reads in the local operator UI; LIVE CORE LOOP = BLOCKED.**
 
+## Negative-path operator evaluation — pre-lock research 2026-10-11
+
+Direct Perpl source analysis and code competitor checks show that **status tracking, idempotency, cancellation, existing history and basic recovery are native or already implemented by Desk/PerplBot**. A new read-only review surface is not alone evidence of product differentiation.
+
+The new candidate capability reads signed order-history refusal entries (`st=7`) and their `sr/fr` cause, and can classify disappearance without positive terminal history as `UNKNOWN_NOT_FAILED`. Genuine pre-order refusals can lack an assigned `oid`; this must no longer cause the whole owner account refresh to return 503. A wallet with `fw=false` and **no failed request** is *not* an incident.
+
+This feature is **LOCAL TESTED ONLY**, not owner-tested on an actual failed order. It does not initiate a new order, retry, enable forwarding, cancel, sign or grant trade permissions. No evidence yet shows an external Perpl operator using or valuing this workflow. Detailed [competitive reality and kill conditions](../research/NEGATIVE_EVENT_NOVELTY_REVIEW_2026-10-11.md).
+
 ## Required business loop
 
 User/operator creates or detects an uncertain Perpl order → agent/service obtains authenticated exchange state → reconciles request ID, order and position with persisted observations → presents a bounded recovery decision to an authorized operator → performs **only** the explicitly approved safe operation → checks the actual exchange consequence → resolves, escalates or keeps UNKNOWN.

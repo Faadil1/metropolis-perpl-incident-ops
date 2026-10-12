@@ -69,6 +69,9 @@ aside{margin-top:17px;color:var(--muted);font:12px monospace}#error{display:none
 <div class="observed-title">Évolution vérifiée des ordres</div>
 <p class="observed-note">Entre deux lectures Perpl signées, l'ordre et son historique sont rapprochés par compte + marché + oid, tout en conservant les rq distincts de création et d'annulation. Une disparition sans statut historique reste UNKNOWN ; une annulation normale n'est pas un incident résolu.</p>
 <div id="orderLifecycle" class="observed-orders" aria-live="polite">Aucune transition observée.</div>
+<div class="observed-title">Revue des états négatifs — READ uniquement</div>
+<p class="observed-note">Seuls les refus réellement présents dans l’historique signé ou les états UNKNOWN issus d’observations signées déclenchent un signal. Un drapeau « forwarding off » ne constitue pas à lui seul un incident.</p>
+<div id="negativeReview" class="observed-orders" aria-live="polite">Aucun échec ou état UNKNOWN observé.</div>
 <details id="accountDetailsWrap"><summary>Voir le relevé technique et la provenance</summary>
 <pre id="accountDetails">Connecter localement la clé READ et actualiser. Aucune donnée manuelle n'est considérée comme LIVE.</pre>
 </details>
@@ -226,6 +229,32 @@ function renderAccount(d,currentlyLive){
        ' · POSITION NON VÉRIFIÉE · PAS UNE RÉCUPÉRATION';
      div.append(title,id,caveat);lifecycleEl.append(div);
    });
+ }
+
+ const reviewEl=el('negativeReview');reviewEl.replaceChildren();
+ const reviews=d.negative_path_review;
+ const cases=reviews?.cases||[];
+ if(!cases.length){
+  const note=document.createElement('p');note.className='observed-note';
+  note.textContent=reviews?.first_history_page_incomplete?
+   'Aucun échec dans la première page, mais l’historique est incomplet. Aucun verdict d’absence d’échec.' :
+   'Aucun échec de l’exchange ou état UNKNOWN positif observé dans cette lecture. Aucune nouvelle action autorisée.';
+  reviewEl.append(note);
+ } else {
+  cases.forEach(row=>{
+   const article=document.createElement('div');article.className='observed-order';
+   const title=document.createElement('strong');title.textContent=row.kind;
+   const id=document.createElement('span');
+   id.textContent='ACC '+row.account_id+' · MKT '+row.market_id+
+     ' · rq '+row.original_request_id+
+     (row.order_id===null || row.order_id===undefined?' · oid NON ATTRIBUÉ':' · oid '+row.order_id);
+   const cause=document.createElement('span');cause.className='origin';
+   cause.textContent=row.status_reason?
+     'SR '+row.status_reason_code+' / '+row.status_reason+' · FR '+String(row.failure_reason||'NON PUBLIÉ'):
+     row.interpretation;
+   const next=document.createElement('span');next.textContent=row.next_step;
+   article.append(title,id,cause,next);reviewEl.append(article);
+  });
  }
  el('accountDetails').textContent=JSON.stringify(d,null,2);
 }

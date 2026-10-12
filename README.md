@@ -81,3 +81,18 @@ released**; its hash and sanitized findings are in
 [evidence/sanitized/PERPL_REAL_CANCEL_FIX_OWNER_RETEST_2026-10-11.md](./evidence/sanitized/PERPL_REAL_CANCEL_FIX_OWNER_RETEST_2026-10-11.md).
 This proves the fixed normal-order lifecycle read. **It does not prove
 incident recovery, load-bearing exchange write capability or unmet demand.**
+
+## Current research direction — signed negative-event review (PRE-LOCK)
+
+New read-only `negative_review.py` can flag **actual venue-recorded failed order
+events** (`st=7`, reason codes), including requests with no allocated `oid`,
+and separately identify unresolved UNKNOWN transitions without authorizing
+resubmission. This is **implemented and tested with local fixtures**, but a real
+failed Perpl order has **not** been observed. The local owner account currently
+has only a normal canceled order; turning forwarding OFF alone is not a failure.
+
+Crucially, [competitive-novelty research](./research/NEGATIVE_EVENT_NOVELTY_REVIEW_2026-10-11.md)
+identifies extensive existing Desk, PerplBot and native Perpl capabilities;
+differentiation and buyer demand are **BLOCKED**, not assumed. No additional
+live order, TRADE API key or production funds are necessary to use this
+observability-only research increment.
