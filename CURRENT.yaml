@@ -199,3 +199,22 @@ operator_case_product:
   real_incident_recovery: NOT_PROVEN
   docs: docs/OPERATOR_RUNBOOK_2026-10-12.md
   true_completion_verdict: NOT_COMPLETE
+
+owner_video_2026_10_12:
+  receipt: evidence/sanitized/PERPL_OWNER_LOCAL_OPERATOR_SCREEN_2026-10-12.md
+  classification: OWNER_LOCAL_SIGNED_ACCOUNT_UI_OBSERVED
+  normal_cancel_correlation: PROVEN
+  operational_cases_on_normal_account: ZERO_CORRECT
+  monitor_active_in_recording: false
+  genuine_failed_perpl_order: NOT_OBSERVED
+  full_history_observed: false
+signed_history_pagination:
+  default_bounded_pages: 5
+  maximum_pages: 10
+  method: SIGNED_ALLOWLISTED_GET_TESTNET
+  implemented: true
+  test_proof: LOCAL_CI_MOCK_TRANSPORT_ONLY
+  owner_live_cursor_proof: PENDING
+  over_limit_or_bad_cursor: UNKNOWN_FAIL_CLOSED
+  incident_source_scan: ENABLED_ON_SIGNED_PAGES
+  full_exhaustive_history_claim: NOT_PROVEN

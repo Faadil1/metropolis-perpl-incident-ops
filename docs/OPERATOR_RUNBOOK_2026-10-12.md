@@ -39,7 +39,7 @@ For a case: open the case, inspect the evidence, write a specific reason, choose
 - **READ-only exchange:** no `TRADE` key is requested, stored or used. Application never sends any exchange order/cancel and cannot block transactions created by other Perpl apps.
 - **HOLD is an operator signal**, not a venue guardrail. Clients trading externally must be stopped or restricted by their own controllers.
 - **Actual remediation is not implemented or verified.** Owner's historical user-executed normal cancellation is real but **not** an incident resolved by this application.
-- The history reader currently fetches **only page 1** (up to 100 results); even when `np` indicates more pages, lack of an order in page 1 is not proof of failure or non-execution.
+- The history reader now attempts **up to 5 signed GET pages** for order history and fills (configurable cap 1–10); only fully exhausted `np` may set `scan_complete=true` for that bounded read. An incomplete scan or time gaps are **not** proof that an order never executed. Live pagination remains pending owner-side verification.
 - Wallet, open orders, positions and history are separate **non-atomic HTTP snapshots**. Zero current positions does not prove no earlier partial fill.
 - Polling is **best effort**, no formal latency/error budget and no verified WebSocket-to-case convergence under stream gaps. Persisted local data is not independently tamper-proof.
 - CSRF/Origin checks and the ephemeral operator session support a **localhost owner-only context**. This is not remote multi-user authentication, RBAC, production encryption or secure public hosting.
@@ -56,3 +56,11 @@ For a case: open the case, inspect the evidence, write a specific reason, choose
 5. Exact hackathon eligibility/judge obligations and terminal assurance. If deadline intervenes, truthfully mark **NOT_COMPLETE**, not a demo-as-product.
 
 **Project gate registry:** [GATE_REGISTRY_PRELOCK.yaml](../GATE_REGISTRY_PRELOCK.yaml); **project completion:** [PRODUCT_DEPTH_ACCEPTANCE.json](../product/PRODUCT_DEPTH_ACCEPTANCE.json). The central [Product Reality Policy](https://github.com/Faadil1/faadil-agent-system/blob/main/PRODUCT-REALITY-POLICY.yaml) takes precedence.
+
+## 2026-10-12 screen review and bounded signed pagination
+
+A new owner-uploaded 26.20-second video independently of our local CI shows the actual owner localhost UI rendering account 1060, 0 open orders, 0 positions, 2 first-page history events, 0 first-page fills, `CANCELED_STATUS_OBSERVED` and exactly 0 operational cases. The monitor remains stopped. See [sanitized owner evidence](../evidence/sanitized/PERPL_OWNER_LOCAL_OPERATOR_SCREEN_2026-10-12.md). No genuine failed trade or operator case decision was shown.
+
+**Updated history depth (code now locally verified by mocked transport):** Perpl `np` cursors trigger additional signed GETs for order-history/fills, bounded to 5 pages by default and 10 max. A second-page failure can reach the actual persistent operator case workflow. `history_scan.complete=false` means the scan was incomplete; do not deduce that unobserved orders did not execute. Page errors, invalid cursors and loops fail the signed read rather than silently recording partial truth. The first-page panels remain an explicit first-page view; the pagination status now reports pages/events scanned separately.
+
+**Not yet done:** owner-run signed Testnet pagination retest, unbounded/exhaustive history where >5 pages exist, verified account-position consequences, and actual incident remediation.

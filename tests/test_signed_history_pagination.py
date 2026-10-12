@@ -102,3 +102,24 @@ def test_no_exchange_write_or_production_claim_even_after_pages():
     assert summary["exchange_writes_enabled"] is False
     assert summary["live_core_loop_proven"] is False
     assert all("/v1/trading/" in path for path in seen)
+
+def test_second_page_failure_creates_persistent_operator_case(tmp_path):
+    from incident_core import IncidentStore
+    from operations_core import OperatorCases
+    signed=client().read_all(transport=httpx.MockTransport(exchange_handler([])))
+    summary=from_signed_snapshots(signed)
+    summary["observed_orders"]=summarize_observed_orders(signed)
+    summary["order_lifecycle"]={"transitions":[]}
+    summary["negative_path_review"]=review_signed_negative_paths(summary)
+    store=IncidentStore(str(tmp_path/"paginated.sqlite3"))
+    cases=OperatorCases(store)
+    evidence=store.record_account_observation(summary)
+    result=cases.ingest_verified(summary,evidence["observation_digest"])
+    assert result["created"]==1
+    item=cases.list()[0]
+    assert item["source"]=="PERPL_SIGNED_BOUNDED_HISTORY"
+    assert item["kind"]=="POSITIVE_EXCHANGE_FAILURE_EVENT"
+    assert item["order_id"] is None
+    assert item["latest_evidence"]["status_reason_code"]==34
+    assert item["incident_recovery_proven"] is False
+    assert cases.verify(item["id"])

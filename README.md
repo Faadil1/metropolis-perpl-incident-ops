@@ -110,3 +110,9 @@ Screenshots, receipts, replay, judge packaging or a green test count never promo
 Follow the [operator runbook](./docs/OPERATOR_RUNBOOK_2026-10-12.md). The same local app now supports authenticated signed account reads → automatic durable negative-event cases → versioned/idempotent operator decisions → signed recheck → later positive terminal status review. Optional owner-controlled signed polling every 45 seconds does not enable external trade writes.
 
 The new product flow is **locally tested** and is useful for real failures once they actually occur; the owner’s own Perpl account has **not produced a real failed trade** in the evidence supplied. An operator HOLD is a **local advisory record, not a Perpl-wide trading block**. Exchange writes, full-page history, independent operator validation, full Live Core Loop and competitive lock remain unavailable or unproven.
+
+## Owner video 2026-10-12 and deeper signed history
+
+The [sanitized video receipt](./evidence/sanitized/PERPL_OWNER_LOCAL_OPERATOR_SCREEN_2026-10-12.md) reconfirms the real normal order cancellation correlated in the local operator, while showing zero operational cases and an inactive monitor. **It is not a recovered incident**.
+
+Perpl signed order/fill history now supports **bounded multi-page cursors** (default 5, maximum 10) with an explicit `scan_complete` truth flag and second-page failed-order intake into the same persistent operator core. This increment is **CI locally verified**, not yet retried with the owner's actual live Testnet pagination. A partial scan never proves an absent execution; PRODUCT_COMPLETE remains blocked.

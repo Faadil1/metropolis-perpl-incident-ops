@@ -15,8 +15,8 @@
   "primary_workstream": "PRODUCT_EXPLOITATION",
   "valid_stop_condition": null,
   "workstream_drift_status": "NO_DRIFT_CLAIMED_PENDING_PER_MATERIAL_TOUCH_AUDIT",
-  "material_user_capability_delta_since_last_milestone": "LOCAL_VERIFIED_SHARED_RUNTIME_PERSISTENT_SIGNED_CASES_OPERATOR_MUTATIONS_OPT_IN_MONITOR_AND_AFTERSTATE_RECONCILIATION",
-  "next_highest_value_depth_delta": "Acquire genuine Perpl or external operator negative-event evidence; complete cross-client effect, bounded whole-history pagination, explicit permission-bound corrective exchange action where safe, signed after-state and external user verification. Do not claim full product on green CI.",
+  "material_user_capability_delta_since_last_milestone": "BOUNDED_SIGNED_HISTORY_CURSOR_TRAVERSAL_AND_SECOND_PAGE_OPERATOR_CASE_LOCAL_TESTED__OWNER_NORMAL_CANCEL_LIVE_REOBSERVED",
+  "next_highest_value_depth_delta": "Retest signed pagination with real owner Testnet data, then build the genuine negative-event operator response and explicitly approved safe corrective consequence with independent product/market verification; do not treat routine cancel or local tests as recovery.",
   "next_depth_delta_priority_basis": "CORE_USER_VALUE_AND_CAUSAL_DIFFERENTIATION_BEFORE_EVIDENCE_PACKAGING",
   "safe_action_depth": {
     "achieved": "READ_ONLY",
@@ -144,7 +144,9 @@
       "case_hash_ledger",
       "later_positive_terminal_reconciliation",
       "operator_signed_recheck",
-      "optional_signed_monitor"
+      "optional_signed_monitor",
+      "bounded_signed_history_cursor_traversal",
+      "second_page_failure_to_persistent_case_local_tested"
     ],
     "external_live_failed_order_proven": false,
     "remote_multi_user_auth_proven": false,
@@ -152,11 +154,12 @@
     "incident_recovery_proven": false,
     "operator_trial_proven": false,
     "limitations": [
-      "history_first_page_only",
       "non_atomic_http",
       "best_effort_monitor",
       "no_venue_trade_guardrail",
-      "no_authorized_exchange_correction"
+      "no_authorized_exchange_correction",
+      "max_5_signed_history_pages_by_default_10_cap",
+      "live_cursor_scan_owner_validation_pending"
     ]
   }
 }
