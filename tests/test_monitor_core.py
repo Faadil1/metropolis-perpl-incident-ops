@@ -18,6 +18,9 @@ def test_operator_can_start_repeated_live_core_poll_and_stop():
     assert monitor.start(15)["already_running"] is False
     assert seen.wait(1.0)
     assert monitor.start(15)["already_running"] is True
+    deadline=time.monotonic()+1.0
+    while monitor.status()["runs"]<1 and time.monotonic()<deadline:
+        time.sleep(.01)
     assert monitor.status()["runs"]>=1
     monitor.stop()
     assert monitor.status()["enabled"] is False
