@@ -11,3 +11,11 @@ This is an **unaudited research build** for Monad Metropolis 2026. **DO NOT use 
 - No claimed LIVE evidence without actual exchange read or transaction receipt and provenance.
 
 Report sensitive findings privately to the repository owner, and avoid posting secrets or unredacted account data.
+
+## Local operator workflow and security boundary (2026-10-12)
+
+- The FastAPI server is explicitly **localhost-only**. A middleware checks allowed Host and Origin on all requests; operator decisions and monitor controls additionally need a session token generated only in server memory and retrieved same-origin. This is **not** production multi-user authentication, RBAC, or protection against malware already running on the same machine.
+- Owner decisions are local SQLite writes; their `actor`, `reason`, optimistic version and idempotency key are retained. The app never stores Perpl signing keys in case rows and has no trade-scope API.
+- A `HOLD` is only a local operational signal. It **does not stop any other Perpl client or user** and cannot prevent fills of resting orders.
+- Background polling is optional, best effort, only uses READ signed Perpl GET and stops with the process. Failed signed reads count as monitor failures, never as proof of venue rejection.
+- Signed HTTP snapshots remain **non-atomic** and order/fill history is first-page-only. Operator closure is not exchange recovery; exposure/positions must be re-verified through the source.

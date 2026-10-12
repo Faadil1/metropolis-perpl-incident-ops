@@ -73,7 +73,7 @@ aside{margin-top:17px;color:var(--muted);font:12px monospace}#error{display:none
 <p class="observed-note">Seuls les refus réellement présents dans l’historique signé ou les états UNKNOWN issus d’observations signées déclenchent un signal. Un drapeau « forwarding off » ne constitue pas à lui seul un incident.</p>
 <div id="negativeReview" class="observed-orders" aria-live="polite">Aucun échec ou état UNKNOWN observé.</div>
 <div class="observed-title">Dossiers opérationnels — interventions réelles et traçables</div>
-<p class="observed-note">Chaque dossier provient d'une lecture Perpl signée. Les actions opérateur modifient réellement le journal local (ACK, HOLD, ESCALATE, RECHECK, CLOSE_REVIEW) ; elles ne passent aucun ordre et ne prouvent pas la récupération de l'exchange. Un cas UNKNOWN ne peut jamais être clôturé comme résolu sans preuve positive.</p>
+<p class="observed-note">Chaque dossier provient d'une lecture Perpl signée. Les actions opérateur modifient réellement le journal local. HOLD ne bloque PAS les autres clients Perpl. Aucune transaction exchange, aucune récupération automatique.</p>
 <div class="observation-grid" id="caseSummary"></div>
 <div id="operatorCases" class="observed-orders" aria-live="polite">Aucun dossier source-vérifié.</div>
 <div class="observed-title">Surveillance locale continue — lectures Perpl signées</div>
@@ -92,7 +92,7 @@ aside{margin-top:17px;color:var(--muted);font:12px monospace}#error{display:none
 <label>Décision
 <select id="operatorAction">
 <option value="ACKNOWLEDGE">Reconnaître</option>
-<option value="HOLD">Mettre en attente / bloquer toute nouvelle soumission</option>
+<option value="HOLD">Mettre en attente (signal local, ne bloque pas les autres clients Perpl)</option>
 <option value="ESCALATE">Escalader</option>
 <option value="REQUEST_RECHECK">Demander une nouvelle lecture Perpl</option>
 <option value="CLOSE_REVIEW">Clore la revue (refus confirmé uniquement)</option>

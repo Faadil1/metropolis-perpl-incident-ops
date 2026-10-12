@@ -1,5 +1,14 @@
 # Product Depth & Live Reality — pre-lock
 
+## Material product capability increment — 2026-10-12
+
+**Built on the shared live account service:** signed account observation automatically creates a uniquely identified, persistent operator case for genuine failed history or a signed-derived UNKNOWN transition. A local operator changes persistent case state with explicitly justified ACK/HOLD/ESCALATE/REQUEST_RECHECK/CLOSE_REVIEW; signed rechecks can mark an actual later positive terminal exchange outcome. The optional owner-controlled monitor polls the same actual Perpl signed READ pipeline. The audit is a local hash chain, not immutable evidence.
+
+**Scope of proof:** new workflow is `LOCAL_VERIFIED` with isolated signed-read fixtures and CI; it has **not** been exercised on an actual failed order in the owner account. The prior genuine normal Testnet order and cancel remain separate `OWNER_LIVE_OBSERVED` facts. No transaction from Metropolis, exchange-wide block, autonomous trade retry, reliable cross-client guardrail, externally operated incident recovery or market novelty is proven.
+
+**Highest safe action tier achieved:** logged local workflow writes (operator decisions), NOT exchange write or market consequence. Next material action still requires explicit owner authority and a real, safe Testnet use case. The 18 material product-depth gaps remain open; no terminal promotion. Full [runbook and failure boundaries](../docs/OPERATOR_RUNBOOK_2026-10-12.md).
+
+
 ## Non-compromise priority enforcement — 2026-10-12
 
 **Primary workstream: PRODUCT_EXPLOITATION.** The real signed Perpl Testnet observation and normal cancel constitute a bounded live *observation* slice. They do not discharge the product's material commitments: a real incident, independently relevant operator pain, a safe authorized and meaningful operator action, verified after-state and operational resilience. Source contract: [PRODUCT_DEPTH_ACCEPTANCE.json](../product/PRODUCT_DEPTH_ACCEPTANCE.json).

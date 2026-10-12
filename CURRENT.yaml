@@ -176,7 +176,26 @@ product_depth_execution:
   product_exploitation_loop: ACTIVE
   justified_material_depth_gaps_remaining: true
   proof_count_never_completes_product: true
-  exact_next_high_value_delta: SIGNED_LIVE_NEGATIVE_EVENT_TO_OPERATOR_DECISION_TO_SAFE_CORRECTION_TO_VERIFIED_CONSEQUENCE
+  exact_next_high_value_delta: GENUINE_LIVE_NEGATIVE_EVENT_TO_APPROVED_REAL_CORRECTION_TO_VERIFIED_EXCHANGE_POSITION_CONSEQUENCE
   valid_stop_condition: NONE
   halt_due_to_deadline_must_not_be_reclassified_as_complete: true
 next_action: PRODUCT_EXPLOITATION remains primary; complete material live incident/operator action/real consequence path or report NOT_COMPLETE. Evidence, judge flow and packaging only secondary until gaps addressed; verify external operator pain and Concept Lock separately.
+
+operator_case_product:
+  code_status: LOCAL_VERIFIED_WITH_CI_NOT_EXTERNAL_LIVE_FAILURE
+  functionality: SIGNED_HISTORY_EVENT_TO_CASE_TO_HUMAN_DECISION_TO_SIGNED_RECHECK_TO_TERMINAL_REVIEW
+  shared_runtime: FASTAPI_SQLITE_ACCOUNT_OBSERVATION_AND_OPERATOR_CASES
+  case_identity: ACCOUNT_MARKET_REQUEST_ORDER_KIND
+  local_mutations: ACKNOWLEDGE_HOLD_ESCALATE_REQUEST_RECHECK_CLOSE_REVIEW
+  optimistic_version_and_idempotency: IMPLEMENTED_LOCAL_TESTED
+  causal_event_hash_chain: IMPLEMENTED_LOCAL_NOT_IMMUTABLE
+  origin_checks: LOCAL_OWNER_ONLY_NOT_MULTI_USER_RBAC
+  opt_in_monitor: IMPLEMENTED_LOCAL_TESTED_45_SECONDS
+  later_terminal_case_reconciliation: IMPLEMENTED_LOCAL_TESTED
+  failure_without_oid: IMPLEMENTED_LOCAL_TESTED
+  real_failed_order_in_owner_account: NOT_OBSERVED
+  independent_operator_trial: NOT_OBSERVED
+  exchange_writes: NOT_IMPLEMENTED
+  real_incident_recovery: NOT_PROVEN
+  docs: docs/OPERATOR_RUNBOOK_2026-10-12.md
+  true_completion_verdict: NOT_COMPLETE

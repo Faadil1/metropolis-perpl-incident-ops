@@ -15,8 +15,8 @@
   "primary_workstream": "PRODUCT_EXPLOITATION",
   "valid_stop_condition": null,
   "workstream_drift_status": "NO_DRIFT_CLAIMED_PENDING_PER_MATERIAL_TOUCH_AUDIT",
-  "material_user_capability_delta_since_last_milestone": "SIGNED_READ_NEGATIVE_PATH_REVIEW_LOCAL_TESTED_NOT_LIVE_FAILURE_PROVEN",
-  "next_highest_value_depth_delta": "Obtain a real Perpl operator negative event or externally verifiable uncertain status, then integrate source-bound operator hold/decision and authorized safe corrective workflow into the same live core with post-action consequence verification.",
+  "material_user_capability_delta_since_last_milestone": "LOCAL_VERIFIED_SHARED_RUNTIME_PERSISTENT_SIGNED_CASES_OPERATOR_MUTATIONS_OPT_IN_MONITOR_AND_AFTERSTATE_RECONCILIATION",
+  "next_highest_value_depth_delta": "Acquire genuine Perpl or external operator negative-event evidence; complete cross-client effect, bounded whole-history pagination, explicit permission-bound corrective exchange action where safe, signed after-state and external user verification. Do not claim full product on green CI.",
   "next_depth_delta_priority_basis": "CORE_USER_VALUE_AND_CAUSAL_DIFFERENTIATION_BEFORE_EVIDENCE_PACKAGING",
   "safe_action_depth": {
     "achieved": "READ_ONLY",
@@ -133,5 +133,30 @@
   },
   "stop_policy": "A valid deadline, safety, authority, coherence or marginal-value stop can end the work but DOES_NOT_RECLASSIFY_INCOMPLETE_AS_COMPLETE",
   "status_transitions_require": "OBSERVED_EVIDENCE_PLUS_CURRENT_CANONICAL_GATES_AND_HUMAN_AUTHORITY_WHERE_PROTECTED",
-  "human_release_authorized": false
+  "human_release_authorized": false,
+  "operator_case_product": {
+    "status": "LOCAL_VERIFIED_NOT_LIVE_NEGATIVE",
+    "capabilities": [
+      "signed_failure_to_persistent_case",
+      "evidence_deduplication",
+      "optimistic_actor_decisions",
+      "local_idempotent_mutations",
+      "case_hash_ledger",
+      "later_positive_terminal_reconciliation",
+      "operator_signed_recheck",
+      "optional_signed_monitor"
+    ],
+    "external_live_failed_order_proven": false,
+    "remote_multi_user_auth_proven": false,
+    "exchange_write_enabled": false,
+    "incident_recovery_proven": false,
+    "operator_trial_proven": false,
+    "limitations": [
+      "history_first_page_only",
+      "non_atomic_http",
+      "best_effort_monitor",
+      "no_venue_trade_guardrail",
+      "no_authorized_exchange_correction"
+    ]
+  }
 }

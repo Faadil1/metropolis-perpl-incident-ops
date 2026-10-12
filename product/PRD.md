@@ -40,3 +40,18 @@ This project applies the **already-promoted** [Product Reality Policy](https://g
 **Complete verdict:** only when the entire justified material product scope is functional, live, safely authorized where applicable, consequences verified, adverse paths covered, and all applicable canonical gates reconciled. The deadline, a working vertical slice, passing tests, one normal cancellation, videos and submission are not completion conditions. If time, access, safety or marginal value validly stops work, report **NOT_COMPLETE**, never manufacture a “ready” verdict.
 
 **Current status:** NOT_COMPLETE / LIVE_CORE_LOOP BLOCKED / DIFFERENTIATOR BLOCKED / CONCEPT_LOCK BLOCKED. Product state is the source of truth; proof count never upgrades it.
+
+## Implemented operational product increment (2026-10-12)
+
+The primary product has advanced beyond a passive dashboard:
+
+- Signed Perpl Testnet account refresh drives source-bound failure/unknown review.
+- A **shared SQLite operator case service** automatically opens **one durable case per exchange identity and event kind**, tracks source observation digests, deduplicates repeated reads, and preserves a hash-linked local event ledger.
+- The operator can **ACKNOWLEDGE, HOLD, ESCALATE, REQUEST_RECHECK, CLOSE_REVIEW** with local session, actor, justification, optimistic version and idempotency. These are real persisted **local workflow consequences**, not exchange writes.
+- A subsequent signed positive terminal outcome for a formerly unknown order moves the case into **RECONCILED_REVIEW_NEEDED** while retaining `incident_recovery_proven=false`. The operator can then close the **review only**.
+- A human can activate local polling (default 45 seconds) through the same signed refresh/case service, with failed-read counters and no false venue-failure inference.
+- Foreign browser origins cannot invoke local signed refreshes or decision writes. This does **not** grant production RBAC or remote tenancy.
+
+**Still product-critical and NOT COMPLETE:** genuinely observed negative business event, full cursor-paginated history, WebSocket-to-case outage convergence, real authorization-gated corrective exchange action where appropriate, independently verified account/position consequence, multi-operator/permitted external access, third-party usability and unmet competitive need. The normal owner Testnet cancellation does not close these gaps.
+
+Full read-only local operator procedure and threat boundaries: [Runbook](../docs/OPERATOR_RUNBOOK_2026-10-12.md). This increment is **LOCAL_VERIFIED** by CI tests; no false `LIVE` status promotion.

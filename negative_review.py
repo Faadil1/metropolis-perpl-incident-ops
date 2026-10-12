@@ -94,7 +94,7 @@ def review_signed_negative_paths(observation):
           "order_id":t.get("order_id"),
           "interpretation":"UNKNOWN_NOT_FAILED",
           "next_step":("Continue same-scope exchange reconciliation and complete pagination; "
-                       "block duplicate order submission."),
+                       "do not resubmit. Warn any actual trading clients; this operator cannot stop external submissions."),
           "retries_authorized":False,
           "exchange_writes_enabled":False,
           "incident_recovery_proven":False,

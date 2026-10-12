@@ -104,3 +104,9 @@ The [Product Depth acceptance contract](./product/PRODUCT_DEPTH_ACCEPTANCE.json)
 The **primary workstream is PRODUCT_EXPLOITATION** until justified remaining functionality is complete or a legitimate stop condition fires. The next material capability is a verified problematic/uncertain Perpl order outcome and a coherent actual operator action → after-state cycle; signed-read error review alone is not incident recovery.
 
 Screenshots, receipts, replay, judge packaging or a green test count never promote this to `PRODUCT_COMPLETE`. Deadline may stop work; any incomplete product remains labeled `NOT_COMPLETE`. The [current PRD](./product/PRD.md) preserves a complete, real product goal without unjustified feature count inflation or trading without owner authorization.
+
+## Unified operator product (local, Testnet, source-bound)
+
+Follow the [operator runbook](./docs/OPERATOR_RUNBOOK_2026-10-12.md). The same local app now supports authenticated signed account reads → automatic durable negative-event cases → versioned/idempotent operator decisions → signed recheck → later positive terminal status review. Optional owner-controlled signed polling every 45 seconds does not enable external trade writes.
+
+The new product flow is **locally tested** and is useful for real failures once they actually occur; the owner’s own Perpl account has **not produced a real failed trade** in the evidence supplied. An operator HOLD is a **local advisory record, not a Perpl-wide trading block**. Exchange writes, full-page history, independent operator validation, full Live Core Loop and competitive lock remain unavailable or unproven.
