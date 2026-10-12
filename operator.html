@@ -76,6 +76,13 @@ aside{margin-top:17px;color:var(--muted);font:12px monospace}#error{display:none
 <p class="observed-note">Chaque dossier provient d'une lecture Perpl signée. Les actions opérateur modifient réellement le journal local (ACK, HOLD, ESCALATE, RECHECK, CLOSE_REVIEW) ; elles ne passent aucun ordre et ne prouvent pas la récupération de l'exchange. Un cas UNKNOWN ne peut jamais être clôturé comme résolu sans preuve positive.</p>
 <div class="observation-grid" id="caseSummary"></div>
 <div id="operatorCases" class="observed-orders" aria-live="polite">Aucun dossier source-vérifié.</div>
+<div class="observed-title">Surveillance locale continue — lectures Perpl signées</div>
+<p class="observed-note">Le même cœur de lecture et de dossiers fonctionne automatiquement toutes les 45 secondes si vous l'activez. C'est un monitor LOCAL facultatif, pas un service production haute disponibilité. Aucun ordre ni retrait n'est possible.</p>
+<div class="observed-order">
+<span id="monitorStatus">Surveillance désactivée</span>
+<button id="monitorStart" type="button" class="secondary">Activer le suivi signé (45 s)</button>
+<button id="monitorStop" type="button" class="secondary">Arrêter le suivi</button>
+</div>
 <div id="caseDetail" hidden>
 <h3 id="caseTitle">Dossier</h3>
 <pre id="caseData"></pre>
@@ -360,6 +367,40 @@ async function loadLatestAccount(){
 }
 loadLatestAccount();
 loadOperatorSession().then(refreshCases).catch(err=>notice('Operator session: '+err.message));
+async function monitorUpdate(){
+ try{
+  const s=await api('/api/ops/monitor');
+  el('monitorStatus').textContent=s.enabled?
+    'LIVE READ POLLING · '+s.interval_seconds+' s · réussites '+s.runs+
+    ' · lectures échouées '+s.failed_reads:
+    'Surveillance arrêtée · réussites '+s.runs+' · lectures échouées '+s.failed_reads;
+ }catch(err){notice('Monitor non disponible : '+err.message)}
+}
+async function monitorChange(which){
+ try{
+  if(!sessionKey)await loadOperatorSession();
+  const path=which==='start'?'/api/ops/monitor/start':'/api/ops/monitor/stop';
+  const options={method:'POST',headers:{'X-Operator-Session':sessionKey}};
+  if(which==='start'){
+    options.headers['Content-Type']='application/json';
+    options.body=JSON.stringify({interval_seconds:45});
+  }
+  await api(path,options);
+  await monitorUpdate();
+ }catch(err){notice('Monitor : '+err.message)}
+}
+el('monitorStart').onclick=()=>monitorChange('start');
+el('monitorStop').onclick=()=>monitorChange('stop');
+monitorUpdate();
+setInterval(async()=>{
+ const s=await api('/api/ops/monitor').catch(()=>null);
+ if(s && s.enabled){
+   await monitorUpdate();
+   await refreshCases();
+   await loadLatestAccount();
+ }
+},30000);
+
 el('caseDecide').onclick=async()=>{
  if(!selectedCase){notice('Sélectionnez un dossier.');return;}
  try{

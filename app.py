@@ -1,6 +1,6 @@
 """Local research API: testnet read-only, never execute a trade."""
 from __future__ import annotations
-import os, sqlite3, secrets
+import os, sqlite3, secrets, threading
 from pathlib import Path
 from fastapi import FastAPI, HTTPException, Request, Header
 from fastapi.responses import HTMLResponse
@@ -14,12 +14,14 @@ from order_observer import summarize_observed_orders
 from order_lifecycle import compare_order_lifecycle
 from negative_review import review_signed_negative_paths
 from operations_core import OperatorCases, CaseNotFound, CaseConflict, CaseForbidden
+from monitor_core import Monitor
 
 app=FastAPI(title='Perpl Incident Operations',version='0.1.0',docs_url='/api/docs',redoc_url=None)
 store=IncidentStore(os.environ.get('INCIDENT_DB_PATH',str(Path(__file__).resolve().parent/'runtime'/'incidents.sqlite3')))
 operations=OperatorCases(store)
 OPERATOR_SESSION=secrets.token_urlsafe(32)
 LOCAL_ORIGINS={'http://127.0.0.1:8765','http://localhost:8765'}
+READ_LOCK=threading.RLock()
 def case_manager():
     global operations
     if operations.store is not store:
@@ -37,6 +39,9 @@ class ManualFrame(BaseModel):
 
 class RequestReview(BaseModel):
     owner_note:str=Field(min_length=8,max_length=1000)
+class MonitorSettings(BaseModel):
+    interval_seconds:int=Field(ge=15,le=3600)
+
 class CaseDecision(BaseModel):
     action:str
     actor:str=Field(min_length=3,max_length=80)
@@ -62,7 +67,7 @@ def incident_or_404(ident):
 @app.get('/api/health')
 def health():
     return {'service':'perpl-incident-operations','mode':'PRELOCK_LOCAL_ONLY','live_network_proven':False,
-            'exchange_writes_enabled':False,'local_case_writes_enabled':True,'multi_user_auth_proven':False,'read_credentials_present':bool(os.environ.get('PERPL_API_KEY_READ') and os.environ.get('PERPL_API_KEY_SECRET_READ'))}
+            'exchange_writes_enabled':False,'local_case_writes_enabled':True,'multi_user_auth_proven':False,'optional_local_monitor_running':monitor.status()['enabled'],'read_credentials_present':bool(os.environ.get('PERPL_API_KEY_READ') and os.environ.get('PERPL_API_KEY_SECRET_READ'))}
 
 @app.get('/api/ops/session')
 def owner_local_session(request:Request):
@@ -157,6 +162,10 @@ def latest_account_observation():
 
 @app.post('/api/account/live-refresh')
 def refresh_account_overview():
+    with READ_LOCK:
+        return _refresh_account_impl()
+
+def _refresh_account_impl():
     try:
         client=PerplReadClient.from_env('testnet')
         raw=client.read_all()
@@ -189,6 +198,27 @@ def refresh_account_overview():
         raise HTTPException(503,'Account read not independently verified; no observation stored.')
     except Exception:
         raise HTTPException(503,'Account read unavailable. No live claim made.')
+
+monitor=Monitor(refresh_account_overview)
+
+@app.get('/api/ops/monitor')
+def monitor_status():
+    return monitor.status()
+
+@app.post('/api/ops/monitor/start')
+def monitor_start(body:MonitorSettings,request:Request,
+                  x_operator_session:str|None=Header(default=None)):
+    require_local_session(request,x_operator_session)
+    try:
+        reply=monitor.start(body.interval_seconds)
+        return {**reply,**monitor.status()}
+    except ValueError as exc:
+        raise HTTPException(422,str(exc))
+
+@app.post('/api/ops/monitor/stop')
+def monitor_stop(request:Request,x_operator_session:str|None=Header(default=None)):
+    require_local_session(request,x_operator_session)
+    return {**monitor.stop(),**monitor.status()}
 
 @app.post('/api/incidents/{ident}/public-market-refresh')
 def public_market_refresh(ident:str):
