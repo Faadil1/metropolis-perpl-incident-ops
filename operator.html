@@ -76,9 +76,12 @@ aside{margin-top:17px;color:var(--muted);font:12px monospace}#error{display:none
 <pre id="accountDetails">Connecter localement la clé READ et actualiser. Aucune donnée manuelle n'est considérée comme LIVE.</pre>
 </details>
 </section>
+<details id="researchLab">
+<summary style="cursor:pointer;margin:24px 0 12px;font:700 12px/1.5 monospace;letter-spacing:.03em">LABORATOIRE DE RECHERCHE LOCAL — ouvrir les incidents manuels / fixtures non LIVE</summary>
+<p class="observed-note">Le parcours opérationnel principal se trouve dans les observations signées ci-dessus. Les valeurs saisies manuellement dans cette section ne prouvent jamais une activité Perpl.</p>
 <div class="columns">
 <section>
-<div class="label">01 · INVESTIGATE</div><h2>Ouvrir un incident</h2>
+<div class="label">RESEARCH 01 · MANUAL_UNVERIFIED</div><h2>Ouvrir un incident</h2>
 <form id="create"><label>Account ID <input type="number" name="account_id" min="1" required placeholder="751"></label>
 <label>Request ID / rq <input type="number" name="rq" min="1" required placeholder="1001"></label>
 <label>Market ID / mkt <input type="number" name="market_id" min="0" required placeholder="1"></label>
@@ -104,6 +107,7 @@ aside{margin-top:17px;color:var(--muted);font:12px monospace}#error{display:none
 </div>
 </section>
 </div>
+</details>
 <aside>Source: Perpl API officielle · incident Desk 15 sept 2026. Ne saisir aucune clé privée ou donnée sensible dans cette interface.</aside>
 </main>
 <script>
