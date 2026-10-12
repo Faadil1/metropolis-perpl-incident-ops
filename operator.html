@@ -189,6 +189,7 @@ async function showOperatorCase(id){
  el('caseData').textContent=JSON.stringify({
     case_id:data.id,account_id:data.account_id,market_id:data.market_id,
     request_id:data.request_id,order_id:data.order_id,status:data.state,
+    venue_terminal_verdict:data.last_venue_verdict,
     evidence:data.latest_evidence,first_seen:data.first_seen_at,last_seen:data.last_seen_at,
     exchange_writes_enabled:false,incident_recovery_proven:false
  },null,2);

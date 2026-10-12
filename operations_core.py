@@ -151,6 +151,46 @@ class OperatorCases:
             created+=1
         return {"created":created,"updated":touched,"source":"PERSISTED_SIGNED_READ",
                 "exchange_writes_enabled":False}
+    def reconcile_verified(self,observation,observation_sha):
+        """Promote signed positive venue history into a durable review, not recovery."""
+        if (observation.get("classification")!="AUTHENTICATED_PERPL_TESTNET_ACCOUNT_OVERVIEW"
+            or observation.get("source")!="SIGNED_PERPL_HTTP_GET"):
+            raise ValueError("authenticated observation required")
+        authorized_ids={a["account_id"] for a in observation.get("accounts",[])
+                        if isinstance(a,dict) and type(a.get("account_id")) is int}
+        terminal={"CANCELED_STATUS_OBSERVED","FILLED_STATUS_OBSERVED",
+                  "EXPIRED_STATUS_OBSERVED","FAILED_STATUS_OBSERVED",
+                  "EXECUTED_STATUS_OBSERVED"}
+        changed=0
+        for event in observation.get("order_lifecycle",{}).get("transitions",[]):
+            if (not isinstance(event,dict) or event.get("finding") not in terminal
+                or event.get("positive_matching_history") is not True
+                or event.get("account_id") not in authorized_ids):
+                continue
+            matches=self.db.execute("""SELECT * FROM operator_cases WHERE
+                kind='UNRESOLVED_ORDER_OUTCOME' AND account_id=? AND market_id=?
+                AND request_id=? AND order_id=? AND state!='REVIEW_CLOSED'""",
+                (event.get("account_id"),event.get("market_id"),
+                 event.get("request_id"),event.get("order_id"))).fetchall()
+            for row in matches:
+                if row["last_venue_verdict"]==event["finding"]:
+                    continue
+                self.db.execute("""UPDATE operator_cases SET last_venue_verdict=?,
+                    state='RECONCILED_REVIEW_NEEDED',version=version+1,
+                    last_seen_at=?,latest_evidence_sha=? WHERE id=?""",
+                    (event["finding"],utc_now(),observation_sha,row["id"]))
+                self._event(row["id"],"VENUE_TERMINAL_OBSERVED","SYSTEM_SIGNED_READ",
+                    "AUTHENTICATED_PERPL_HISTORY",{
+                    "original_rq":row["request_id"],
+                    "terminal_rq":event.get("terminal_event_request_id"),
+                    "order_id":row["order_id"],"finding":event["finding"],
+                    "signed_observation_sha256":observation_sha,
+                    "incident_recovery_proven":False,
+                    "position_consequence_verified":False})
+                changed+=1
+        return {"reconciled_cases":changed,"exchange_writes_enabled":False,
+                "incident_recovery_proven":False}
+
     def list(self,limit=100):
         if type(limit) is not int or not 1<=limit<=200:
             raise ValueError("invalid case list limit")
@@ -212,8 +252,15 @@ class OperatorCases:
             if row["state"]=="REVIEW_CLOSED" and action!="ESCALATE":
                 raise CaseForbidden("closed case requires explicit escalation to reopen")
             if action=="CLOSE_REVIEW":
-                if row["kind"]!="POSITIVE_EXCHANGE_FAILURE_EVENT" or row["source"]!="PERPL_SIGNED_FIRST_HISTORY_PAGE":
-                    raise CaseForbidden("UNKNOWN cannot be closed as resolved; obtain positive final exchange evidence")
+                confirmed_failure=(row["kind"]=="POSITIVE_EXCHANGE_FAILURE_EVENT" and
+                                   row["source"]=="PERPL_SIGNED_FIRST_HISTORY_PAGE")
+                terminal_review=(row["kind"]=="UNRESOLVED_ORDER_OUTCOME" and
+                    row["last_venue_verdict"] in (
+                        "CANCELED_STATUS_OBSERVED","FILLED_STATUS_OBSERVED",
+                        "EXPIRED_STATUS_OBSERVED","FAILED_STATUS_OBSERVED",
+                        "EXECUTED_STATUS_OBSERVED"))
+                if not (confirmed_failure or terminal_review):
+                    raise CaseForbidden("UNKNOWN cannot close without positively signed terminal evidence")
             state=statuses[action]
             self.db.execute("""UPDATE operator_cases SET state=?,version=?,actor_name=?,
                  last_review_at=? WHERE id=?""",

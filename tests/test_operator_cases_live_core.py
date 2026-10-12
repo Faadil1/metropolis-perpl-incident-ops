@@ -236,3 +236,45 @@ def test_monitor_control_requires_local_session(harness):
     result=client.post("/api/ops/monitor/start",json={"interval_seconds":45})
     assert result.status_code==403
     assert client.get("/api/ops/monitor").json()["enabled"] is False
+
+def test_unknown_case_reconciles_with_later_real_terminal_history_and_operator_can_close(harness):
+    app,client,reads,path=harness
+    reads.clear()
+    reads.extend([
+      signed_raw(opens=[OPEN],history=[OPEN]),
+      signed_raw(history=[]),
+      signed_raw(history=[{**OPEN,"rq":200,"st":5},OPEN])
+    ])
+    refresh(client)
+    refresh(client)
+    original=cases(client)[0]
+    assert original["state"]=="OPEN"
+    assert original["kind"]=="UNRESOLVED_ORDER_OUTCOME"
+    assert decision(client,original,action="CLOSE_REVIEW",headers=session(client)).status_code==422
+    reconciled=refresh(client)
+    assert reconciled["operator_case_reconciliation"]["reconciled_cases"]==1
+    after=cases(client)[0]
+    assert after["last_venue_verdict"]=="CANCELED_STATUS_OBSERVED"
+    assert after["state"]=="RECONCILED_REVIEW_NEEDED"
+    assert after["version"]==2
+    assert app.case_manager().verify(after["id"])
+    closed=decision(client,after,action="CLOSE_REVIEW",headers=session(client))
+    assert closed.status_code==200,closed.text
+    assert closed.json()["state"]=="REVIEW_CLOSED"
+    assert closed.json()["incident_recovery_proven"] is False
+    assert closed.json()["exchange_writes_enabled"] is False
+    assert app.case_manager().verify(after["id"])
+
+def test_reconciliation_does_not_match_different_order(harness):
+    app,client,reads,path=harness
+    reads.clear()
+    reads.extend([
+      signed_raw(opens=[OPEN],history=[OPEN]),
+      signed_raw(history=[]),
+      signed_raw(history=[{**OPEN,"rq":200,"oid":1235,"st":5}])
+    ])
+    refresh(client);refresh(client)
+    out=refresh(client)
+    assert out["operator_case_reconciliation"]["reconciled_cases"]==0
+    assert cases(client)[0]["last_venue_verdict"]=="NOT_RECONCILED"
+    assert cases(client)[0]["state"]=="OPEN"

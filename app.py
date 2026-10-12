@@ -199,6 +199,8 @@ def _refresh_account_impl():
             receipt=store.record_account_observation(summary)
             summary['operator_case_ingest']=manager.ingest_verified(
                 summary,receipt['observation_digest'])
+            summary['operator_case_reconciliation']=manager.reconcile_verified(
+                summary,receipt['observation_digest'])
             store.db.execute('COMMIT')
         except Exception:
             store.db.execute('ROLLBACK')
