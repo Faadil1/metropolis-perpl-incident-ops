@@ -57,7 +57,7 @@ def test_unknown_schema_refused_no_false_status():
         summarize_observed_orders(raw)
 
 def test_limit_prevents_unbounded_ui_payload():
-    raw=evidence();raw['orders']['d']=[{**order(),'rq':i,'oid':i} for i in range(12)]
+    raw=evidence();raw['orders']['d']=[{**order(),'rq':i+1,'oid':i+1} for i in range(12)]
     out=summarize_observed_orders(raw,limit=4)
     assert out['open_orders']['available_count']==12
     assert out['open_orders']['shown_count']==4
