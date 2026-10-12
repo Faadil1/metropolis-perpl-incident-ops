@@ -170,10 +170,13 @@ def refresh_account_overview():
         summary['order_lifecycle']=compare_order_lifecycle(previous,summary,earlier=recent)
         summary['negative_path_review']=review_signed_negative_paths(summary)
         # Atomic signed observation and source-verified operator case creation.
+        # CREATE TABLE via executescript may commit an active SQLite txn.
+        # Resolve/rebind case schema BEFORE beginning the observation txn.
+        manager=case_manager()
         store.db.execute('BEGIN IMMEDIATE')
         try:
             receipt=store.record_account_observation(summary)
-            summary['operator_case_ingest']=case_manager().ingest_verified(
+            summary['operator_case_ingest']=manager.ingest_verified(
                 summary,receipt['observation_digest'])
             store.db.execute('COMMIT')
         except Exception:
