@@ -67,7 +67,7 @@ aside{margin-top:17px;color:var(--muted);font:12px monospace}#error{display:none
 <p id="accountPagination" class="observed-note"></p>
 </details>
 <div class="observed-title">Évolution vérifiée des ordres</div>
-<p class="observed-note">Entre deux lectures Perpl signées, l'ordre et son historique sont rapprochés par account + market + rq + oid. Une disparition sans statut historique reste UNKNOWN ; une annulation normale n'est pas un incident résolu.</p>
+<p class="observed-note">Entre deux lectures Perpl signées, l'ordre et son historique sont rapprochés par compte + marché + oid, tout en conservant les rq distincts de création et d'annulation. Une disparition sans statut historique reste UNKNOWN ; une annulation normale n'est pas un incident résolu.</p>
 <div id="orderLifecycle" class="observed-orders" aria-live="polite">Aucune transition observée.</div>
 <details id="accountDetailsWrap"><summary>Voir le relevé technique et la provenance</summary>
 <pre id="accountDetails">Connecter localement la clé READ et actualiser. Aucune donnée manuelle n'est considérée comme LIVE.</pre>
@@ -221,8 +221,9 @@ function renderAccount(d,currentlyLive){
      const id=document.createElement('span');id.textContent='ACC '+t.account_id+
        ' · MKT '+t.market_id+' · rq '+t.request_id+' · OID '+t.order_id;
      const caveat=document.createElement('span');caveat.className='origin';
-     caveat.textContent='STATUT HISTORIQUE '+(t.positive_matching_history?'OBSERVÉ':'NON CONFIRMÉ')+
-       ' · CONSÉQUENCE POSITION NON VÉRIFIÉE · PAS UNE RÉCUPÉRATION';
+     caveat.textContent='HISTORIQUE '+(t.positive_matching_history?'CORRÉLÉ':'NON CONFIRMÉ')+
+       (t.request_id_changed_on_terminal_action?' · rq ACTION '+t.terminal_event_request_id:'')+
+       ' · POSITION NON VÉRIFIÉE · PAS UNE RÉCUPÉRATION';
      div.append(title,id,caveat);lifecycleEl.append(div);
    });
  }

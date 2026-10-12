@@ -110,5 +110,26 @@ real_order_identity_correlation:
   filled_history_first_page_count: 0
   recovery_proven: false
   exchange_writes_enabled: false
-normal_order_cancellation_transition: IMPLEMENTED_NOT_YET_OWNER_VERIFIED
-next_action: owner cancel exactly the observed order using official Perpl Testnet UI and verify matching signed history status through read-only local product; do not create duplicate order
+normal_order_cancellation_transition: PROVEN_FROM_OWNER_VIDEO_SIGNED_HISTORY_POSITIVE_STATUS
+owner_cancel_video:
+  local_date: 2026-10-11
+  utc_capture_date: 2026-10-12
+  provenance: OWNER_UPLOADED_VIDEO_LOCAL_OPERATOR_NOT_PUBLISHED
+  account_id: 1060
+  market_id: 16
+  open_orders: 0
+  positions: 0
+  historical_first_page_events: 2
+  fills_first_page: 0
+  original_order_request_id: COMMITMENT_ONLY
+  cancel_action_request_id: DISTINCT_FROM_ORIGINAL_COMMITMENT_ONLY
+  order_id: SAME_AS_ORIGINAL_OPEN
+  original_identity_sha256: b90a6004e8389540821a673d89292d60449da3cdff808c70173712869da7a0aa
+  cancel_identity_sha256: e5eee005655ba395e4ee1fedd735a38594ec96dd50b58281eca32c00674b7e82
+  signed_history_terminal_status: CANCELED
+  prior_ui_lifecycle_verdict: NO_ORDER_TRANSITIONS_PROVEN_BUG
+  detected_root_cause: CANCELLATION_RQ_DIFFERS_FROM_ORIGINAL_AND_LATEST_ONLY_LOSES_OPEN
+  full_incident_recovery_proven: false
+  user_video_publication: NOT_AUTHORIZED
+normal_cancel_reconciliation_fix: IMPLEMENTED_PENDING_CI_AND_RETEST
+next_action: CI validate separate cancel-rq/order-oid mapping; owner update/restart app and verify CANCELED_STATUS_OBSERVED from retained signed local history

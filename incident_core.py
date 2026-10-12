@@ -89,6 +89,22 @@ class IncidentStore:
             return {'classification':'LOCAL_INTEGRITY_FAILURE'}
         return json.loads(row['overview_json'])
 
+    def recent_account_observations(self, limit=512):
+        """Newest first. Bounded SHA-verified local evidence; no network calls."""
+        if type(limit) is not int or not 1<=limit<=512:
+            raise ValueError('bounded local lookback required')
+        rows=self.db.execute(
+            'SELECT overview_json,overview_sha256 FROM account_observations '
+            'ORDER BY id DESC LIMIT ?', (limit,)
+        ).fetchall()
+        result=[]
+        for row in rows:
+            payload=row['overview_json']
+            if hashlib.sha256(payload.encode()).hexdigest()!=row['overview_sha256']:
+                raise ValueError('local account evidence integrity check failed')
+            result.append(json.loads(payload))
+        return result
+
     def create(self, network, account_id, rq, market_id):
         if network != 'testnet':
             raise ValueError('only testnet supported')

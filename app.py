@@ -86,7 +86,10 @@ def refresh_account_overview():
         summary['observed_orders']=summarize_observed_orders(raw)
         previous=store.latest_account_observation()
         summary['activity']=compare_live_observations(previous,summary)
-        summary['order_lifecycle']=compare_order_lifecycle(previous,summary)
+        # Retain signed previously-open identities even if an intermediate refresh
+        # already saw 0 active orders. READ-only and bounded to 512 local records.
+        recent=store.recent_account_observations(limit=512)
+        summary['order_lifecycle']=compare_order_lifecycle(previous,summary,earlier=recent)
         store.record_account_observation(summary)
         return summary
     except CredentialsUnavailable as exc:

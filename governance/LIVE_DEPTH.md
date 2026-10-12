@@ -70,6 +70,18 @@ Owner provided a screenshot of the latest local Metropolis UI. **A genuine Perpl
 
 The next read-only product increment compares subsequent signed order snapshots to the last observation. **If** the same `rq+oid` disappears and matching Perpl history carries `CANCELED`, the classification is `CANCELED_STATUS_OBSERVED` **not** recovered incident; absence of a matching terminal history event means `DISAPPEARED_OUTCOME_UNKNOWN`. The code never issues an order or a cancel, does not infer flat positions or no partial fills, and rejects cross-account comparisons or truncated live-open rows. Actual owner cancellation and outcome are not yet observed.
 
+## Live cancellation evidence and discovered bug — owner video, 2026-10-11 local / 2026-10-12 UTC
+
+**New genuine external evidence:** Owner-provided 22.4-second MP4 recording of the local operator UI after canceling the real Testnet order. The video is not published or saved in public GitHub.
+
+Signed Perpl account summary in the operator UI: **account #1060**, **0 open orders**, **0 open positions**, **2 first-page historical order events**, **0 first-page fills**. History row #1 carries **CANCELED**, history row #2 carries **OPEN**. Both use the same original `oid`, account and market **16**. The `rq` for the `CANCELED` row is *different* from the `rq` for the original `OPEN` row. The original order identity commitment is `b90a6004e8389540821a673d89292d60449da3cdff808c70173712869da7a0aa`; terminal cancel command identity commitment is `e5eee005655ba395e4ee1fedd735a38594ec96dd50b58281eca32c00674b7e82` (SHA256 of `10143|acc|mkt|rq|oid`; no exact IDs publicly republished).
+
+**Product bug observed on live owner path:** UI incorrectly said `Aucune évolution d'ordre prouvée entre ces deux observations.` The code joined terminal history by **original `rq` + `oid`** and compared only the latest two snapshots. The real Perpl cancellation uses a **new request ID** referencing the **same order ID**. [Perpl's official websocket example](https://github.com/PerplFoundation/api-docs/blob/main/websocket.md#placing-orders) shows cancel order as a new command with `rq: Date.now()` and `oid: orderIdToCancel`, consistent with the observed evidence.
+
+**Repair:** The read-only lifecycle comparator now identifies the *order* with (account,market,oid), records both the original request ID and the terminal action request ID, checks positive terminal history, fails closed for missing/conflicting history and never treats a normal cancel as incident recovery. It searches earlier SHA-verified locally persisted signed account snapshots (up to 512) to recover the earlier OPEN after intermediate 0-open refreshes or a process restart. This is a bounded experimental capability, not production wallet isolation, complete history pagination or reliable long-term replay. Tests include the real observed distinct-`rq` case.
+
+**Truth boundary:** **Perpl historical cancellation = OWNER-VIDEO OBSERVED**, **Metropolis status correction = NOT YET LIVE RE-RUN BY OWNER**. Zero first-page fills and zero open positions do not prove that no prior partial execution ever happened. No real incident recovery, external adoption, defensible novelty or Concept Lock claim.
+
 ## Evidence boundaries
 
 | Claim | State |
@@ -83,7 +95,8 @@ The next read-only product increment compares subsequent signed order snapshots 
 | Two signed account reads compared in UI, no aggregate change | **PROVEN by second owner screenshot** |
 | Signed operator aggregate counts react to first real testnet order | **PROVEN by owner screenshots — 0→1 open orders** |
 | Real order `rq/oid` details observed inside product | **PROVEN by owner screenshot, matching signed order and history rows** |
-| Read-only cancel transition for this order | **IMPLEMENTED/LOCAL_TESTED; not yet owner-exercised** |
+| Perpl signed historical `CANCELED` for prior real order | **PROVEN by owner-provided video**, different action `rq`, same `oid` |
+| Fixed comparator showing `CANCELED_STATUS_OBSERVED` on owner device | **BLOCKED: not re-exercised after patch** |
 | Received order-status event from live Perpl WS | BLOCKED |
 | Approved and executed a testnet cancel | NOT_IMPLEMENTED |
 | Final position/order consequence reconciled | NOT_IMPLEMENTED |

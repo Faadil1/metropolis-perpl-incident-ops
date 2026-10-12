@@ -57,3 +57,17 @@ exchange event, not an incident. A read-only lifecycle comparison can classify
 a future matching `CANCELED` history event, but **actual owner-side cancellation
 has not yet been observed** and neither canceled status nor a missing order
 automatically proves absence of fills or positions.
+
+## Normal Perpl Testnet cancellation — live behavioral finding
+
+An owner video recorded on October 11 local time (October 12 UTC) proves a
+historical **CANCELED** status from a real Perpl order previously OPEN.
+It has **the same order ID (`oid`) but a different cancel-action request ID
+(`rq`)**. This exposed a real bug in our old status join. The read-only
+comparator now matches the order by account/market/oid and preserves both
+request IDs. It uses bounded, digest-verified persisted observations to bridge
+repeated refreshes and restarts. Retest in the owner local runtime is pending.
+
+This is a **normal owner-originated cancel on Perpl**, not an incident recovery.
+No exchange writes have been implemented in Metropolis, and there is no
+evidence of actual order fills in the first history page or an open position.
