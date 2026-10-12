@@ -114,9 +114,30 @@ def audit(contract: dict, registry_text: str) -> list[str]:
     fail_if(contract.get("first_incident_recovery_slice") == "PROVEN" and
             dimensions.get("integrated_live_incident_core_loop", {}).get("status") != "PROVEN",
             "cannot claim first live incident slice without live core loop")
-    fail_if(contract.get("completion_claim") == "PRODUCT_COMPLETE" and
-            (any(x in ("ACTIVE", "BLOCKED") for x in gates.values()) or material_gaps),
-            "the gateway registry has not been terminally reconciled for full-product claim")
+    # Not every ACTIVE registry gate must turn PROVEN: monitoring, governing and
+    # lifecycle stages are allowed to remain active during a functioning product.
+    # A terminal claim DOES require the relevant load-bearing readiness gates
+    # and explicit human authority, never just a green CI run.
+    ready_gates = {
+        "DIFFERENTIATOR",
+        "COMPETITIVE_NOVELTY_KILL_GATE",
+        "LIVE_DEPTH",
+        "FAILURE_RECOVERY",
+        "REAL_USER_OPERATOR_LOOP",
+        "EXTERNAL_USER_OPERATOR_EVIDENCE",
+        "CLAIM_RUNTIME_EVIDENCE_GRAPH",
+        "RUNTIME_COMMIT_BINDING",
+        "CLEAN_ROOM_CORE_PATH",
+        "JUDGE_OPERATOR_SELF_SERVE",
+    }
+    if contract.get("completion_claim") == "PRODUCT_COMPLETE" or contract.get("build_candidate_ready") is True:
+        for key in sorted(ready_gates):
+            if gates.get(key) != "PROVEN":
+                errors.append(f"{key}: terminal readiness requires PROVEN or an approved material N/A adjudication")
+        fail_if(contract.get("human_release_authorized") is not True,
+                "protected human release authorization required before claiming readiness")
+        fail_if(bool(material_gaps),
+                "a terminal claim still has material product-depth gaps")
     for label, field in (("concept_lock", "concept_lock"), ("live_incident_core_loop", "live_core_loop")):
         match = re.search(rf"^{field}: (ACTIVE|BLOCKED|PROVEN|N/A)$", registry_text, re.M)
         if label == "concept_lock" and match and contract.get(label) != match.group(1):

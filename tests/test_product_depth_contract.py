@@ -68,3 +68,18 @@ def test_cannot_auto_enable_exchange_write_on_proof_claim():
     altered=copy.deepcopy(source)
     altered["safe_action_depth"]["exchange_write_currently_enabled"]=True
     assert any("may not be enabled" in e for e in audit(altered,registry))
+
+def test_green_ci_is_not_permission_to_promote_readiness():
+    altered=change(build_candidate_ready=True)
+    errors=audit(altered,registry)
+    assert any("human release authorization" in e for e in errors)
+    assert any("terminal readiness" in e for e in errors)
+
+def test_ongoing_governance_is_not_itself_a_product_gap():
+    # Proving every governance/lifecycle ACTIVE gate would be an invalid,
+    # potentially impossible feature-count target. Required material depth
+    # and terminal readiness gates are what govern release decisions.
+    altered=change(build_candidate_ready=True,human_release_authorized=True)
+    errors=audit(altered,registry)
+    assert any("LIVE_DEPTH" in e for e in errors)
+    assert not any("every ACTIVE" in e for e in errors)

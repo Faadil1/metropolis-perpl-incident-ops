@@ -132,5 +132,6 @@
     }
   },
   "stop_policy": "A valid deadline, safety, authority, coherence or marginal-value stop can end the work but DOES_NOT_RECLASSIFY_INCOMPLETE_AS_COMPLETE",
-  "status_transitions_require": "OBSERVED_EVIDENCE_PLUS_CURRENT_CANONICAL_GATES_AND_HUMAN_AUTHORITY_WHERE_PROTECTED"
+  "status_transitions_require": "OBSERVED_EVIDENCE_PLUS_CURRENT_CANONICAL_GATES_AND_HUMAN_AUTHORITY_WHERE_PROTECTED",
+  "human_release_authorized": false
 }
